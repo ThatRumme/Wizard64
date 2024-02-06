@@ -193,7 +193,7 @@ public class PlayerMovement : MonoBehaviour
         float maxSpeed = maxWalkSpeed;
 
         // Move vel vector towards target vel
-        Vector3 velXZ = new Vector3(vel.x, 0, vel.z);
+        Vector3 velXZ    = new(vel.x, 0, vel.z);
         Vector3 newVelXZ = Vector3.MoveTowards(velXZ, maxSpeed * fixedMovement, groundAcceleration * Time.deltaTime);
         vel = new Vector3(newVelXZ.x, vel.y, newVelXZ.z);
 

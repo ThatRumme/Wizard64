@@ -56,15 +56,15 @@ public class MouseLook : MonoBehaviour
         if (!gm.gameActive)
             return;
 
-        deltaRot.x = inputs.Main.MouseX.ReadValue<float>() * MouseLook.sensitivity * 0.01f;
-        deltaRot.y = inputs.Main.MouseY.ReadValue<float>() * MouseLook.sensitivity * 0.01f;
+        deltaRot.x = inputs.Main.MouseX.ReadValue<float>() * sensitivity * 0.01f;
+        deltaRot.y = inputs.Main.MouseY.ReadValue<float>() * sensitivity * 0.01f;
 
         switch (axes)
         {
             case RotationAxes.MouseXAndY:
                 {
-                    rotationX = MouseLook.ClampAngle(rotationX + deltaRot.x, minimumX, maximumX);
-                    rotationY = MouseLook.ClampAngle(rotationY + deltaRot.y, minimumY, maximumY);
+                    rotationX = ClampAngle(rotationX + deltaRot.x, minimumX, maximumX);
+                    rotationY = ClampAngle(rotationY + deltaRot.y, minimumY, maximumY);
 
                     Quaternion xQuaternion = Quaternion.AngleAxis(rotationX, Vector3.up);
                     Quaternion yQuaternion = Quaternion.AngleAxis(rotationY, -Vector3.right);
@@ -75,7 +75,7 @@ public class MouseLook : MonoBehaviour
 
             case RotationAxes.MouseX:
                 {
-                    rotationX = MouseLook.ClampAngle(rotationX + deltaRot.x, minimumX, maximumX);
+                    rotationX = ClampAngle(rotationX + deltaRot.x, minimumX, maximumX);
 
                     Quaternion xQuaternion = Quaternion.AngleAxis(rotationX, Vector3.up);
                     transform.localRotation = originalRotation * xQuaternion;
@@ -84,7 +84,7 @@ public class MouseLook : MonoBehaviour
 
             default:
                 {
-                    rotationY = MouseLook.ClampAngle(rotationY + deltaRot.y, minimumY, maximumY);
+                    rotationY = ClampAngle(rotationY + deltaRot.y, minimumY, maximumY);
 
                     Quaternion yQuaternion = Quaternion.AngleAxis(-rotationY, Vector3.right);
                     transform.localRotation = originalRotation * yQuaternion;
@@ -95,8 +95,8 @@ public class MouseLook : MonoBehaviour
 
     public void SetRotation(float x, float y)
     {
-        rotationX = MouseLook.ClampAngle(x, minimumX, maximumX);
-        rotationY = MouseLook.ClampAngle(y, minimumY, maximumY);
+        rotationX = ClampAngle(x, minimumX, maximumX);
+        rotationY = ClampAngle(y, minimumY, maximumY);
 
         Quaternion xQuaternion = Quaternion.AngleAxis(x, Vector3.up);
         Quaternion yQuaternion = Quaternion.AngleAxis(y, -Vector3.right);
