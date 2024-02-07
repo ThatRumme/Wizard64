@@ -26,9 +26,13 @@ public class PlayerMovement : MonoBehaviour
     private bool _removedJump; //If one jump has been removed from jumpsleft
 
     [Header("Jump")]
-    public float jumpForce; //jump velocity
+    public float initialJumpForce; //jump velocity
+    public float continuedJumpForce; //jump velocity when holding space for higher jump
+    public float continuedJumpDuration; //time allowed to hold jump button for extra height
+    private float _continuedJumpTimer;
     public float highJumpForce; //jump velocity
     private bool _wishJump; //if the player wishes to jump
+    private bool _wishedJumpPerformed;
     public float jumpGap; //amount of time the player can still jump after running off an edge
     public int maxJumps; //Maximum amount of jumps until hitting the ground again
     private bool _inJump; //If the player is currently doing a jump
@@ -131,6 +135,11 @@ public class PlayerMovement : MonoBehaviour
             jumpsLeft--;
             _removedJump = true;
         }
+
+        if (_wishJump && _wishedJumpPerformed)
+        {
+            _continuedJumpTimer += Time.deltaTime;
+        }
     }
 
     void RotateCharacterTowardsMoveDirection(Vector3 targetDir)
@@ -167,6 +176,7 @@ public class PlayerMovement : MonoBehaviour
         if (context.performed)
         {
             _wishJump = true;
+            _wishedJumpPerformed = false;
         }
         if (context.canceled)
         {
@@ -229,30 +239,33 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     void Jump()
     {
-        //Check Jump
-        if (!((isGrounded || _airTimer < jumpGap || jumpsLeft > 0)
-            && _wishJump))
-            return;
+        if (!_wishJump) return;
 
-        //Add Velocity
-        if (vel.y <= jumpForce)
+        if(isGrounded || _airTimer < jumpGap || jumpsLeft > 0 && !_wishedJumpPerformed)
         {
-            vel.y = jumpForce;
-            _airTimer = 1;
-        }
-        else if (jumpsLeft == maxJumps && vel.y <= jumpForce)
-            vel.y = vel.y + jumpForce;
+            if (vel.y <= initialJumpForce)
+            {
+                vel.y = initialJumpForce;
+                _airTimer = 1;
+            }
 
-        AdjustValuesWhenJumpPerformed();
+            _wishedJumpPerformed = true;
+
+            AdjustValuesWhenJumpPerformed();
+        }
+        else if(_wishedJumpPerformed && _continuedJumpTimer < continuedJumpDuration)
+        {
+            vel.y = vel.y + (continuedJumpForce*200*Time.deltaTime);
+        }
     }
 
     void AdjustValuesWhenJumpPerformed()
     {
         isGrounded = false;
         _inAir = true;
-        _wishJump = false;
         jumpsLeft--;
         _inJump = true;
+        _continuedJumpTimer = 0;
     }
 
     /// <summary>
@@ -280,12 +293,15 @@ public class PlayerMovement : MonoBehaviour
 
     private void Land()
     {
+
         if (_landed)
             return;
 
         _inAir = false;
         _airTimer = 0;
         jumpsLeft = maxJumps;
+        _wishedJumpPerformed = false;
+
 
         if (vel.y < -4 && _airTimer > 0.5f)
         {

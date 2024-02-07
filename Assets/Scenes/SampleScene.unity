@@ -1891,6 +1891,21 @@ PrefabInstance:
       propertyPath: cameraPivot
       value: 
       objectReference: {fileID: 496908333}
+    - target: {fileID: 4628948498048262706, guid: e6d786d4d93eed24fa3224dd55cd12fd,
+        type: 3}
+      propertyPath: initialJumpForce
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4628948498048262706, guid: e6d786d4d93eed24fa3224dd55cd12fd,
+        type: 3}
+      propertyPath: continuedJumpForce
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4628948498048262706, guid: e6d786d4d93eed24fa3224dd55cd12fd,
+        type: 3}
+      propertyPath: continuedJumpDuration
+      value: 0.15
+      objectReference: {fileID: 0}
     - target: {fileID: 5204139321458555481, guid: e6d786d4d93eed24fa3224dd55cd12fd,
         type: 3}
       propertyPath: m_Name
