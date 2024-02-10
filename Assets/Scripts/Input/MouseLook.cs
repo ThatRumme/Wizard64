@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class MouseLook : MonoBehaviour
@@ -33,9 +34,12 @@ public class MouseLook : MonoBehaviour
 
     public GameObject player;
 
+    private bool _isRecentering = false;
+
     private void Start()
     {
         gm = GameManager.Instance;
+        inputs = GameManager.Instance.inputs;
         var rb = GetComponent<Rigidbody>();
         if (rb)
         {
@@ -45,52 +49,55 @@ public class MouseLook : MonoBehaviour
         originalRotation = transform.localRotation;
         originalRotationWorld = transform.rotation;
 
-        inputs = GameManager.Instance.inputs;
-        
+        Debug.Log("init: " + originalRotation.eulerAngles);
+
+        inputs.Main.RecenterCamera.performed += OnRecenterCamera;
+
+    }
+
+    private void OnDestroy()
+    {
+        inputs.Main.RecenterCamera.performed -= OnRecenterCamera;
+    }
+
+
+    private void OnRecenterCamera(InputAction.CallbackContext context)
+    {
+        if(context.performed)
+        {
+
+            void TweenOnComplete()
+            {
+                var currentRot = gameObject.transform.localRotation.eulerAngles;
+                var currentRotWorld = gameObject.transform.rotation;
+                rotationX = currentRot.y;
+                rotationY = -currentRot.x;
+                _isRecentering = false;
+            }
+
+            Quaternion rot = player.transform.localRotation * Quaternion.Euler(22.5f, 0, 0);
+            gameObject.transform.DOLocalRotateQuaternion(rot, 0.5f).SetEase(Ease.OutCubic).OnComplete(TweenOnComplete);
+
+
+            _isRecentering = true;
+
+        }
     }
 
     private void LateUpdate()
     {
         transform.position = player.transform.position;
 
-        if (!gm.gameActive)
+        if (!gm.gameActive || _isRecentering)
             return;
 
         deltaRot.x = inputs.Main.MouseX.ReadValue<float>() * MouseLook.sensitivity * 0.01f;
         deltaRot.y = inputs.Main.MouseY.ReadValue<float>() * MouseLook.sensitivity * 0.01f;
 
-        switch (axes)
-        {
-            case RotationAxes.MouseXAndY:
-                {
-                    rotationX = MouseLook.ClampAngle(rotationX + deltaRot.x, minimumX, maximumX);
-                    rotationY = MouseLook.ClampAngle(rotationY + deltaRot.y, minimumY, maximumY);
+        rotationX = MouseLook.ClampAngle(rotationX + deltaRot.x, minimumX, maximumX);
+        rotationY = MouseLook.ClampAngle(rotationY + deltaRot.y, minimumY, maximumY);
 
-                    Quaternion xQuaternion = Quaternion.AngleAxis(rotationX, Vector3.up);
-                    Quaternion yQuaternion = Quaternion.AngleAxis(rotationY, -Vector3.right);
-
-                    transform.localRotation = xQuaternion * (originalRotation * yQuaternion);
-                    break;
-                }
-
-            case RotationAxes.MouseX:
-                {
-                    rotationX = MouseLook.ClampAngle(rotationX + deltaRot.x, minimumX, maximumX);
-
-                    Quaternion xQuaternion = Quaternion.AngleAxis(rotationX, Vector3.up);
-                    transform.localRotation = originalRotation * xQuaternion;
-                    break;
-                }
-
-            default:
-                {
-                    rotationY = MouseLook.ClampAngle(rotationY + deltaRot.y, minimumY, maximumY);
-
-                    Quaternion yQuaternion = Quaternion.AngleAxis(-rotationY, Vector3.right);
-                    transform.localRotation = originalRotation * yQuaternion;
-                    break;
-                }
-        }
+        transform.localRotation = Quaternion.Euler(rotationY * -1, rotationX, 0);
     }
 
     public void SetRotation(float x, float y)
