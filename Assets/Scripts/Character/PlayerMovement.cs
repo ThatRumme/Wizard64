@@ -1,5 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
+using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Windows;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -26,17 +29,38 @@ public class PlayerMovement : MonoBehaviour
     private bool _removedJump; //If one jump has been removed from jumpsleft
 
     [Header("Jump")]
-    public float jumpForce; //jump velocity
-    public float highJumpForce; //jump velocity
+    public float initialJumpForce; //jump velocity
+    public float continuedJumpForce; //jump velocity when holding space for higher jump
+    public float continuedJumpDuration; //time allowed to hold jump button for extra height
+    private float _continuedJumpTimer;
+    
     private bool _wishJump; //if the player wishes to jump
+    private bool _wishedJumpPerformed;
     public float jumpGap; //amount of time the player can still jump after running off an edge
     public int maxJumps; //Maximum amount of jumps until hitting the ground again
     private bool _inJump; //If the player is currently doing a jump
-    private bool _isGroundPounding;
-    private bool _isSuperJumping;
 
     public int jumpsLeft; //current jumps left
 
+    [Header("GroundPound")]
+    //public float highJumpForce; //jump velocity
+    //public float gpFreezeInAirTime; //amount of time player will freeze in the air before getting launched downwards
+    //public float gpForwardPushForce; //how much should groundpound launch the player forwards
+    public Vector2 gpDistanceForce;
+    public Vector2 gpHighJumpForce;
+    public float gpSuperChargeForwardMultiplier = 1.5f;
+    public float gpSuperChargeUpwardsMutliplier = 1.25f;
+    public float gpDownwardsPushForce; //how much should groundpound launch the player downwards before superjump
+    public float gpNoMovementJumpHeightMultiplier; //Extra force for the super jump if player isn't pressing any movement inputs
+    public float gpSlowmoMultiplier;
+    public float gpUpgradeTime = 0.5f;
+    private bool _isGroundPounding;
+    private bool _isSuperJumping;
+    private bool _isChargingGroundPound = false;
+    private bool _gpIsUpgraded = false;
+   
+
+    [Header("Misc")]
     public Transform cameraPivot; // Camera pivot
 
     //Private
@@ -46,8 +70,10 @@ public class PlayerMovement : MonoBehaviour
     Vector3 oldPos; //position before moving character
     float movedDistance = 0;
     public float stepDistance = 1f;
+    private float _speedMultiplier = 1f;
 
     PlayerInput inputs;
+
 
     #endregion
 
@@ -63,6 +89,7 @@ public class PlayerMovement : MonoBehaviour
         inputs.Main.Jump.performed -= JumpInput;
         inputs.Main.Jump.canceled -= JumpInput;
         inputs.Main.Fire1.performed -= Fire1Input;
+        inputs.Main.Fire1.canceled -= Fire1Input;
     }
 
 
@@ -77,6 +104,7 @@ public class PlayerMovement : MonoBehaviour
         inputs.Main.Jump.performed += JumpInput;
         inputs.Main.Jump.canceled += JumpInput;
         inputs.Main.Fire1.performed += Fire1Input;
+        inputs.Main.Fire1.canceled += Fire1Input;
     }
 
     // Update is called once per frame
@@ -92,7 +120,9 @@ public class PlayerMovement : MonoBehaviour
         isGrounded = _controller.isGrounded;
 
         vel2D = new Vector2(vel.x, vel.z);
-        
+
+        Jump();
+
         //Ground and air movement
         if (isGrounded)
         {
@@ -109,11 +139,12 @@ public class PlayerMovement : MonoBehaviour
 
         Move();
         
-        Jump();
 
         oldPos = transform.position;
+
         //Move the player
-        _controller.Move(vel * Time.deltaTime);
+        _controller.Move(Time.deltaTime * _speedMultiplier * vel);
+        
 
         CancelVelocity();
         
@@ -130,6 +161,11 @@ public class PlayerMovement : MonoBehaviour
         {
             jumpsLeft--;
             _removedJump = true;
+        }
+
+        if (_wishJump && _wishedJumpPerformed)
+        {
+            _continuedJumpTimer += Time.deltaTime;
         }
     }
 
@@ -167,6 +203,7 @@ public class PlayerMovement : MonoBehaviour
         if (context.performed)
         {
             _wishJump = true;
+            _wishedJumpPerformed = false;
         }
         if (context.canceled)
         {
@@ -177,6 +214,10 @@ public class PlayerMovement : MonoBehaviour
     void Fire1Input(InputAction.CallbackContext context)
     {
         if (context.performed)
+        {
+            ChargeGroundPound();
+        }
+        else if (context.canceled)
         {
             PerformGroundPoundMovement();
         }
@@ -208,7 +249,12 @@ public class PlayerMovement : MonoBehaviour
     void SuperJump()
     {
         //Add Velocity
-        vel.y = highJumpForce;
+        float jumpVel = _movement.magnitude > 0.8f ? gpDistanceForce.y : gpHighJumpForce.y;
+        if (_gpIsUpgraded)
+        {
+            jumpVel *= gpSuperChargeUpwardsMutliplier;
+        }
+        vel.y = jumpVel;
         _airTimer = 1;
 
         _isSuperJumping = true;
@@ -218,10 +264,40 @@ public class PlayerMovement : MonoBehaviour
 
     void PerformGroundPoundMovement()
     {
-        if (isGrounded || _isGroundPounding || _isSuperJumping) return;
+
+        _speedMultiplier = 1;
+        if (isGrounded)
+        {
+            _isChargingGroundPound = false;
+                return;
+        }
+            
+        if (!_isChargingGroundPound) return;
+
+        _isChargingGroundPound = false;
 
         _isGroundPounding = true;
-        vel.y = -maxGravity;
+
+
+
+        float forwardsSpeed = _movement.magnitude > 0.8f ? gpDistanceForce.x : gpHighJumpForce.x;
+        if (_gpIsUpgraded)
+        {
+            forwardsSpeed *= gpSuperChargeForwardMultiplier;
+        }
+
+        Vector3 force = transform.forward * forwardsSpeed + new Vector3(0, -gpDownwardsPushForce, 0);
+        ApplyForce(force);
+    }
+
+    void ChargeGroundPound()
+    {
+        if (isGrounded || _isChargingGroundPound || _isGroundPounding || _isSuperJumping) return;
+
+        _gpIsUpgraded = false;
+        _speedMultiplier = gpSlowmoMultiplier;
+        _isChargingGroundPound = true;
+        StartCoroutine(UpgradeGroundPoundToSuper());
     }
 
     /// <summary>
@@ -229,30 +305,42 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     void Jump()
     {
-        //Check Jump
-        if (!((isGrounded || _airTimer < jumpGap || jumpsLeft > 0)
-            && _wishJump))
-            return;
+        if (!_wishJump) return;
 
-        //Add Velocity
-        if (vel.y <= jumpForce)
+        if(isGrounded || _airTimer < jumpGap || jumpsLeft > 0 && !_wishedJumpPerformed)
         {
-            vel.y = jumpForce;
-            _airTimer = 1;
-        }
-        else if (jumpsLeft == maxJumps && vel.y <= jumpForce)
-            vel.y = vel.y + jumpForce;
+            if (vel.y <= initialJumpForce)
+            {
+                vel.y = initialJumpForce;
+                _airTimer = 1;
+            }
 
-        AdjustValuesWhenJumpPerformed();
+            _wishedJumpPerformed = true;
+
+            AdjustValuesWhenJumpPerformed();
+
+            if (_isGroundPounding)
+            {
+                _isGroundPounding = false;
+            }
+        }
+        else if(_wishedJumpPerformed && _continuedJumpTimer < continuedJumpDuration && vel.y <= initialJumpForce*1.5f) //Only if player has less velocity than the highest you can reach from a normal jump
+        {
+            vel.y = vel.y + (continuedJumpForce*200*Time.deltaTime);
+        }
+        else
+        {
+            _wishJump = false;
+        }
     }
 
     void AdjustValuesWhenJumpPerformed()
     {
         isGrounded = false;
         _inAir = true;
-        _wishJump = false;
         jumpsLeft--;
         _inJump = true;
+        _continuedJumpTimer = 0;
     }
 
     /// <summary>
@@ -272,7 +360,7 @@ public class PlayerMovement : MonoBehaviour
         float dist = 0.25f;
         var layerMask = 1 << LayerMask.NameToLayer("Default");
         bool rayHit = Physics.Raycast(transform.position, Vector3.down, out RaycastHit _,
-            dist + _controller.height * 0.5f, layerMask, QueryTriggerInteraction.Ignore);
+            dist + _controller.height * 0.6f, layerMask, QueryTriggerInteraction.Ignore);
 
         //If there is ground, keep some downgoing velocity, else make it 0.
         vel.y = rayHit ? -4 : -0;
@@ -280,12 +368,15 @@ public class PlayerMovement : MonoBehaviour
 
     private void Land()
     {
+
         if (_landed)
             return;
 
         _inAir = false;
         _airTimer = 0;
         jumpsLeft = maxJumps;
+        _wishedJumpPerformed = false;
+
 
         if (vel.y < -4 && _airTimer > 0.5f)
         {
@@ -301,10 +392,11 @@ public class PlayerMovement : MonoBehaviour
             SuperJump();
         }
 
-        if(!_isGroundPounding)
+        if(!_isGroundPounding && _isSuperJumping)
         {
             _isSuperJumping = false;
         }
+
         _isGroundPounding = false;
         
     }
@@ -319,12 +411,13 @@ public class PlayerMovement : MonoBehaviour
 
     void CancelVelocity()
     {
-        if(Mathf.Abs(transform.position.x - oldPos.x) < Mathf.Abs(vel.x * Time.deltaTime * 0.2f))
+
+        if(Mathf.Abs(transform.position.x - oldPos.x) < Mathf.Abs(vel.x * Time.deltaTime * 0.2f * _speedMultiplier))
         {
             vel.x = 0;
         }
 
-        if (Mathf.Abs(transform.position.y - oldPos.y) < Mathf.Abs(vel.y * Time.deltaTime * 0.2f))
+        if (Mathf.Abs(transform.position.y - oldPos.y) < Mathf.Abs(vel.y * Time.deltaTime * 0.2f * _speedMultiplier))
         {
             if(vel.y > 0)
             {
@@ -332,7 +425,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        if (Mathf.Abs(transform.position.z - oldPos.z) < Mathf.Abs(vel.z * Time.deltaTime * 0.2f))
+        if (Mathf.Abs(transform.position.z - oldPos.z) < Mathf.Abs(vel.z * Time.deltaTime * 0.2f * _speedMultiplier))
         {
             vel.z = 0;
         }
@@ -340,7 +433,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void ApplyForce(Vector3 force, float scale = 1)
     {
-        vel += force * scale;
+        vel += (force * scale);
     }
 
     public void SetMaxJumps(int jumps)
@@ -348,4 +441,25 @@ public class PlayerMovement : MonoBehaviour
         maxJumps = jumps;
         jumpsLeft = jumps;
     }
+
+    public void LimitHorizonalSpeed()
+    {
+        if(vel2D.magnitude > maxWalkSpeed)
+        {
+            Vector2 limitedVel = vel2D.normalized * maxWalkSpeed;
+            vel.x = limitedVel.x;
+            vel.z = limitedVel.y;
+        }
+    }
+
+    IEnumerator UpgradeGroundPoundToSuper()
+    {
+        yield return new WaitForSeconds(gpUpgradeTime);
+        if (_isChargingGroundPound)
+        {
+            _gpIsUpgraded = true;
+        }
+       
+    }
+
 }
