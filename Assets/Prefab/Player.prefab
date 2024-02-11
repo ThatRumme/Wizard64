@@ -319,11 +319,14 @@ MonoBehaviour:
   jumpGap: 0.2
   maxJumps: 2
   jumpsLeft: 2
-  highJumpForce: 18.4
-  gpFreezeInAirTime: 0.15
-  gpForwardPushForce: 22
-  gpDownwardsdPushForce: 20
+  gpDistanceForce: {x: 17, y: 14}
+  gpHighJumpForce: {x: 0, y: 21}
+  gpSuperChargeForwardMultiplier: 1.4
+  gpSuperChargeUpwardsMutliplier: 1.25
+  gpDownwardsPushForce: 30
   gpNoMovementJumpHeightMultiplier: 1.1
+  gpSlowmoMultiplier: 0.1
+  gpUpgradeTime: 0.25
   cameraPivot: {fileID: 0}
   moveVec: {x: 0, y: 0, z: 0}
   _controller: {fileID: 5204139321458555480}

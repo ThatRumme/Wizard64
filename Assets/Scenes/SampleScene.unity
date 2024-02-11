@@ -4318,43 +4318,48 @@ PrefabInstance:
       objectReference: {fileID: 496908333}
     - target: {fileID: 4628948498048262706, guid: e6d786d4d93eed24fa3224dd55cd12fd,
         type: 3}
-      propertyPath: initialJumpForce
-      value: 6
+      propertyPath: gpUpgradeTime
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 4628948498048262706, guid: e6d786d4d93eed24fa3224dd55cd12fd,
+        type: 3}
+      propertyPath: gpDistanceForce.x
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 4628948498048262706, guid: e6d786d4d93eed24fa3224dd55cd12fd,
+        type: 3}
+      propertyPath: gpDistanceForce.y
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 4628948498048262706, guid: e6d786d4d93eed24fa3224dd55cd12fd,
         type: 3}
       propertyPath: gpFreezeInAirTime
-      value: 0.15
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4628948498048262706, guid: e6d786d4d93eed24fa3224dd55cd12fd,
         type: 3}
-      propertyPath: continuedJumpForce
-      value: 0.3
+      propertyPath: gpHighJumpForce.y
+      value: 21
       objectReference: {fileID: 0}
     - target: {fileID: 4628948498048262706, guid: e6d786d4d93eed24fa3224dd55cd12fd,
         type: 3}
-      propertyPath: gpForwardPushForce
-      value: 22
+      propertyPath: gpSlowmoMultiplier
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 4628948498048262706, guid: e6d786d4d93eed24fa3224dd55cd12fd,
         type: 3}
-      propertyPath: continuedJumpDuration
-      value: 0.15
+      propertyPath: gpDownwardsPushForce
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 4628948498048262706, guid: e6d786d4d93eed24fa3224dd55cd12fd,
         type: 3}
-      propertyPath: gpDownwardsdPushForce
-      value: 20
+      propertyPath: gpSuperChargeForwardMultiplier
+      value: 1.4
       objectReference: {fileID: 0}
     - target: {fileID: 4628948498048262706, guid: e6d786d4d93eed24fa3224dd55cd12fd,
         type: 3}
-      propertyPath: gpNoMovementJumpHeightMultiplier
-      value: 1.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5204139321458555480, guid: e6d786d4d93eed24fa3224dd55cd12fd,
-        type: 3}
-      propertyPath: m_SlopeLimit
-      value: 45
+      propertyPath: gpSuperChargeUpwardsMutliplier
+      value: 1.25
       objectReference: {fileID: 0}
     - target: {fileID: 5204139321458555481, guid: e6d786d4d93eed24fa3224dd55cd12fd,
         type: 3}
