@@ -313,11 +313,17 @@ MonoBehaviour:
   airAcceleration: 20
   gravity: 40
   maxGravity: 40
-  jumpForce: 12.7
-  highJumpForce: 18.4
+  initialJumpForce: 6
+  continuedJumpForce: 0.3
+  continuedJumpDuration: 0.15
   jumpGap: 0.2
   maxJumps: 2
   jumpsLeft: 2
+  highJumpForce: 18.4
+  gpFreezeInAirTime: 0.15
+  gpForwardPushForce: 22
+  gpDownwardsdPushForce: 20
+  gpNoMovementJumpHeightMultiplier: 1.1
   cameraPivot: {fileID: 0}
   moveVec: {x: 0, y: 0, z: 0}
   _controller: {fileID: 5204139321458555480}
