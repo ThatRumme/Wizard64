@@ -1,0 +1,44 @@
+using UnityEngine;
+
+public class Ability : MonoBehaviour
+{
+    protected Player player;
+    protected PlayerMovement playerMovement;
+
+    protected bool isEnabled = false;
+
+    protected bool AllowUse()
+    {
+        //if enough mana
+        return true;
+    }
+
+    public virtual void Setup(Player player, PlayerMovement pm)
+    {
+        this.player = player;
+        playerMovement = pm;
+    }
+    public virtual void Activate()
+    {
+        
+    }
+    public virtual void Deactivate()
+    {
+        ResetValues();
+    }
+    public virtual void SwitchOn()
+    {
+        isEnabled = true;
+        ResetValues();
+    }
+    public virtual void SwitchOff()
+    {
+        isEnabled = false;
+        ResetValues();
+    }
+
+    protected virtual void ResetValues()
+    {
+        
+    }
+}

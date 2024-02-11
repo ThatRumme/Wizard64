@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Windows;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -74,6 +73,20 @@ public class PlayerMovement : MonoBehaviour
 
     PlayerInput inputs;
 
+
+    #endregion
+
+    #region Propeties
+
+    public bool IsGrounded()
+    {
+        return isGrounded;
+    }
+
+    public bool IsUsingGroundPound()
+    {
+        return _isGroundPounding || _isChargingGroundPound;
+    }
 
     #endregion
 
@@ -461,5 +474,20 @@ public class PlayerMovement : MonoBehaviour
         }
        
     }
+
+
+    #region Abilities
+
+    public void OnFlameThrowerActivate()
+    {
+
+    }
+
+    public void OnFlameThrowerDeactivate()
+    {
+
+    }
+
+    #endregion
 
 }
