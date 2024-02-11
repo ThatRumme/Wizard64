@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
@@ -30,17 +32,26 @@ public class PlayerMovement : MonoBehaviour
     public float continuedJumpForce; //jump velocity when holding space for higher jump
     public float continuedJumpDuration; //time allowed to hold jump button for extra height
     private float _continuedJumpTimer;
-    public float highJumpForce; //jump velocity
+    
     private bool _wishJump; //if the player wishes to jump
     private bool _wishedJumpPerformed;
     public float jumpGap; //amount of time the player can still jump after running off an edge
     public int maxJumps; //Maximum amount of jumps until hitting the ground again
     private bool _inJump; //If the player is currently doing a jump
-    private bool _isGroundPounding;
-    private bool _isSuperJumping;
 
     public int jumpsLeft; //current jumps left
 
+    [Header("GroundPound")]
+    public float highJumpForce; //jump velocity
+    public float gpFreezeInAirTime; //amount of time player will freeze in the air before getting launched downwards
+    public float gpForwardPushForce; //how much should groundpound launch the player forwards
+    public float gpDownwardsdPushForce; //how much should groundpound launch the player forwards
+    public float gpNoMovementJumpHeightMultiplier; //Extra force for the super jump if player isn't pressing any movement inputs
+    private bool _isGroundPounding;
+    private bool _isSuperJumping;
+   
+
+    [Header("Misc")]
     public Transform cameraPivot; // Camera pivot
 
     //Private
@@ -50,8 +61,10 @@ public class PlayerMovement : MonoBehaviour
     Vector3 oldPos; //position before moving character
     float movedDistance = 0;
     public float stepDistance = 1f;
+    private bool _freezeMovement;
 
     PlayerInput inputs;
+
 
     #endregion
 
@@ -117,7 +130,11 @@ public class PlayerMovement : MonoBehaviour
 
         oldPos = transform.position;
         //Move the player
-        _controller.Move(vel * Time.deltaTime);
+        if (!_freezeMovement)
+        {
+            _controller.Move(vel * Time.deltaTime);
+        }
+        
 
         CancelVelocity();
         
@@ -218,7 +235,8 @@ public class PlayerMovement : MonoBehaviour
     void SuperJump()
     {
         //Add Velocity
-        vel.y = highJumpForce;
+        float highJumpMultiplier = _movement.magnitude > 0.8f ? 1 : gpNoMovementJumpHeightMultiplier;
+        vel.y = highJumpForce * highJumpMultiplier;
         _airTimer = 1;
 
         _isSuperJumping = true;
@@ -230,8 +248,18 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isGrounded || _isGroundPounding || _isSuperJumping) return;
 
-        _isGroundPounding = true;
-        vel.y = -maxGravity;
+        void OnComplete()
+        {
+            _isGroundPounding = true;
+
+            float forwardsSpeed = _movement.magnitude > 0.8f ? gpForwardPushForce : 0;
+
+            Vector3 force = transform.forward * forwardsSpeed + new Vector3(0, -gpDownwardsdPushForce, 0);
+            ApplyForce(force);
+        }
+
+        StartCoroutine(FreezeInAir(gpFreezeInAirTime, OnComplete));
+        
     }
 
     /// <summary>
@@ -285,7 +313,7 @@ public class PlayerMovement : MonoBehaviour
         float dist = 0.25f;
         var layerMask = 1 << LayerMask.NameToLayer("Default");
         bool rayHit = Physics.Raycast(transform.position, Vector3.down, out RaycastHit _,
-            dist + _controller.height * 0.5f, layerMask, QueryTriggerInteraction.Ignore);
+            dist + _controller.height * 0.6f, layerMask, QueryTriggerInteraction.Ignore);
 
         //If there is ground, keep some downgoing velocity, else make it 0.
         vel.y = rayHit ? -4 : -0;
@@ -364,4 +392,23 @@ public class PlayerMovement : MonoBehaviour
         maxJumps = jumps;
         jumpsLeft = jumps;
     }
+
+    public void LimitHorizonalSpeed()
+    {
+        if(vel2D.magnitude > maxWalkSpeed)
+        {
+            Vector2 limitedVel = vel2D.normalized * maxWalkSpeed;
+            vel.x = limitedVel.x;
+            vel.z = limitedVel.y;
+        }
+    }
+
+    IEnumerator FreezeInAir(float timeInSeconds, Action onComplete)
+    {
+        _freezeMovement = true;
+        yield return new WaitForSeconds(timeInSeconds);
+        _freezeMovement = false;
+        onComplete();
+    }
+
 }

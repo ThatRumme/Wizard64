@@ -49,8 +49,6 @@ public class MouseLook : MonoBehaviour
         originalRotation = transform.localRotation;
         originalRotationWorld = transform.rotation;
 
-        Debug.Log("init: " + originalRotation.eulerAngles);
-
         inputs.Main.RecenterCamera.performed += OnRecenterCamera;
 
     }
