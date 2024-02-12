@@ -6,8 +6,10 @@ public class Player : MonoBehaviour
     #region Fields
     [Header("General")]
     public PlayerMovement pm; //Player Movement
-    public Transform camera; //Camera
-
+    public Transform camera;  //Camera
+    public Animator  _animationContoller;
+    
+    
     PlayerInput inputs;
 
     #endregion
@@ -25,7 +27,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         pm = GetComponent<PlayerMovement>();
-
+        
     }
 
     // Update is called once per frame
