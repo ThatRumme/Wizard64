@@ -21,6 +21,13 @@ public class AbilityHandler : MonoBehaviour
         inputs.Main.SwitchAbilityBackward.performed += PrevAbilityInput;
         inputs.Main.UseAbility.performed += UseAbility;
         inputs.Main.UseAbility.canceled += UseAbility;
+
+        
+        foreach(Ability ability in abilities)
+        {
+            ability.Setup(player, playerMovement);
+        }
+
     }
 
     private void OnDestroy()
@@ -31,6 +38,7 @@ public class AbilityHandler : MonoBehaviour
         inputs.Main.UseAbility.canceled -= UseAbility;
 
     }
+
 
     // Update is called once per frame
     void Update()

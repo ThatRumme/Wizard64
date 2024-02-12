@@ -5,8 +5,15 @@ using UnityEngine;
 public class FlameThrower : Ability
 {
 
+    //public vars
+    public float maxDuration;
+
+
+    //private vars
     private bool isInUse = false;
     private bool usedMidAir = false;
+
+    private int currentPressId = 0;
 
     public override void Activate()
     {
@@ -22,17 +29,18 @@ public class FlameThrower : Ability
             {
                 playerMovement.OnFlameThrowerActivate();
             }
+
+            StartCoroutine(TurnOffTimer());
             
         }
     }
     public override void Deactivate()
     {
-        if(isInUse)
-        {
+        if (isInUse) { 
             base.Deactivate();
             if (usedMidAir)
             {
-                playerMovement.OnFlameThrowerActivate();
+                playerMovement.OnFlameThrowerDeactivate();
             }
         }
     }
@@ -55,5 +63,17 @@ public class FlameThrower : Ability
     protected override void ResetValues()
     {
         isInUse = false;
+        base.ResetValues();
+    }
+
+    IEnumerator TurnOffTimer()
+    {
+        currentPressId++;
+        int pressId = currentPressId;
+        yield return new WaitForSeconds(maxDuration);
+        if(currentPressId == pressId)
+        {
+            Deactivate();
+        }
     }
 }

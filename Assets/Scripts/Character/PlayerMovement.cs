@@ -57,7 +57,10 @@ public class PlayerMovement : MonoBehaviour
     private bool _isSuperJumping;
     private bool _isChargingGroundPound = false;
     private bool _gpIsUpgraded = false;
-   
+
+    [Header("Abilities")]
+    private bool _isHovering = false;
+
 
     [Header("Misc")]
     public Transform cameraPivot; // Camera pivot
@@ -155,15 +158,25 @@ public class PlayerMovement : MonoBehaviour
 
         oldPos = transform.position;
 
-        //Move the player
-        _controller.Move(Time.deltaTime * _speedMultiplier * vel);
-        
+        MoveThePlayer();
 
         CancelVelocity();
         
     }
 
     #endregion
+
+    void MoveThePlayer()
+    {
+
+        if (_isHovering && vel.y < 0)
+        {
+            vel.y = 0;
+        }
+
+
+        _controller.Move(Time.deltaTime * _speedMultiplier * vel);
+    }
 
     void AirTimer()
     {
@@ -480,12 +493,12 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnFlameThrowerActivate()
     {
-
+        _isHovering = true;
     }
 
     public void OnFlameThrowerDeactivate()
     {
-
+        _isHovering = false;
     }
 
     #endregion

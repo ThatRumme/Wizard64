@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Ability : MonoBehaviour
 {
+    public int idx = 0;
+
     protected Player player;
     protected PlayerMovement playerMovement;
 
