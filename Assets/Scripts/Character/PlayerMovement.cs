@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -74,7 +74,8 @@ public class PlayerMovement : MonoBehaviour
 
     PlayerInput inputs;
 
-
+    //Animator vars
+    private int _runningParamIndex = Animator.StringToHash("Running");
     #endregion
 
     #region Unity Methods (Start, Awake, Update)
@@ -116,6 +117,9 @@ public class PlayerMovement : MonoBehaviour
             HandleInputs();
         }
             
+        //Real shitty animation control
+        player._animationContoller.SetBool(_runningParamIndex, _movement.magnitude > 0.1);
+        
         //update grounded
         isGrounded = _controller.isGrounded;
 
@@ -144,6 +148,8 @@ public class PlayerMovement : MonoBehaviour
 
         //Move the player
         _controller.Move(Time.deltaTime * _speedMultiplier * vel);
+        
+
         
 
         CancelVelocity();
