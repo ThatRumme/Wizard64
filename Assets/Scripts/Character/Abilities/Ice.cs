@@ -13,6 +13,8 @@ public class Ice : Ability
 
     public GameObject iceDecal;
 
+    public Vector3[] raycasts;
+
     
 
     public override void Activate()
@@ -23,20 +25,27 @@ public class Ice : Ability
         int layerMask = 1 << LayerMask.NameToLayer("Ignore Raycast") | 1 << LayerMask.NameToLayer("Player");
         layerMask = ~layerMask;
 
-        RaycastHit hit;
-        // Does the ray intersect any objects excluding the player layer
-        Physics.Raycast(transform.position, Camera.main.transform.TransformDirection(Vector3.forward), out hit, maxRange, layerMask);
-        if (hit.collider)
+
+        for(int i = 0; i < raycasts.Length; ++i)
         {
-            Debug.Log(hit.collider.gameObject.name);
-            GameObject decal = Instantiate(iceDecal, hit.point, Quaternion.Euler(90,0,0));
-            Debug.DrawRay(transform.position, Camera.main.transform.TransformDirection(Vector3.forward) * hit.distance, Color.blue, 2);
-            
+
+            Vector3 dir = raycasts[i];
+            RaycastHit hit;
+            Physics.Raycast(transform.position, Camera.main.transform.TransformDirection(dir), out hit, maxRange, layerMask);
+            if (hit.collider)
+            {
+                Debug.Log(hit.collider.gameObject.name);
+                GameObject decal = Instantiate(iceDecal, hit.point, Quaternion.Euler(90, 0, 0));
+
+            }
+            else
+            {
+                Debug.DrawRay(transform.position, Camera.main.transform.TransformDirection(dir) * maxRange, Color.blue, 2);
+            }
         }
-        else
-        {
-            Debug.DrawRay(transform.position, Camera.main.transform.TransformDirection(Vector3.forward) * maxRange, Color.blue, 2);
-        }
+
+
+        
 
 
     }

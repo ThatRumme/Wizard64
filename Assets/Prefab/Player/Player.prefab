@@ -472,6 +472,8 @@ MonoBehaviour:
   gpNoMovementJumpHeightMultiplier: 1.1
   gpSlowmoMultiplier: 0.1
   gpUpgradeTime: 0.25
+  maxWalkSpeedIce: 12
+  iceAcceleration: 30
   cameraPivot: {fileID: 0}
   moveVec: {x: 0, y: 0, z: 0}
   _controller: {fileID: 5204139321458555480}
@@ -1055,6 +1057,12 @@ MonoBehaviour:
   maxRange: 7
   iceDecal: {fileID: 1680696001273369422, guid: 860c6644d58be1d479e3442abf9bd2f0,
     type: 3}
+  raycasts:
+  - {x: 0, y: 0.3, z: 1}
+  - {x: 0, y: 0.15, z: 1}
+  - {x: 0, y: 0, z: 1}
+  - {x: 0, y: -0.15, z: 1}
+  - {x: 0, y: -0.3, z: 1}
 --- !u!1 &8802104244224015489
 GameObject:
   m_ObjectHideFlags: 0

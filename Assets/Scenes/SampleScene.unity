@@ -5198,6 +5198,56 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 397713127607571881, guid: e6d786d4d93eed24fa3224dd55cd12fd,
+        type: 3}
+      propertyPath: raycasts.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 397713127607571881, guid: e6d786d4d93eed24fa3224dd55cd12fd,
+        type: 3}
+      propertyPath: raycasts.Array.data[0].y
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 397713127607571881, guid: e6d786d4d93eed24fa3224dd55cd12fd,
+        type: 3}
+      propertyPath: raycasts.Array.data[0].z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 397713127607571881, guid: e6d786d4d93eed24fa3224dd55cd12fd,
+        type: 3}
+      propertyPath: raycasts.Array.data[1].y
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 397713127607571881, guid: e6d786d4d93eed24fa3224dd55cd12fd,
+        type: 3}
+      propertyPath: raycasts.Array.data[1].z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 397713127607571881, guid: e6d786d4d93eed24fa3224dd55cd12fd,
+        type: 3}
+      propertyPath: raycasts.Array.data[2].z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 397713127607571881, guid: e6d786d4d93eed24fa3224dd55cd12fd,
+        type: 3}
+      propertyPath: raycasts.Array.data[3].y
+      value: -0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 397713127607571881, guid: e6d786d4d93eed24fa3224dd55cd12fd,
+        type: 3}
+      propertyPath: raycasts.Array.data[3].z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 397713127607571881, guid: e6d786d4d93eed24fa3224dd55cd12fd,
+        type: 3}
+      propertyPath: raycasts.Array.data[4].y
+      value: -0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 397713127607571881, guid: e6d786d4d93eed24fa3224dd55cd12fd,
+        type: 3}
+      propertyPath: raycasts.Array.data[4].z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 443425529463926684, guid: e6d786d4d93eed24fa3224dd55cd12fd,
         type: 3}
       propertyPath: camera
