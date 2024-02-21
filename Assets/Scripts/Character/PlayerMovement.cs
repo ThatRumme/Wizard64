@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -60,6 +62,12 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Abilities")]
     private bool _isHovering = false;
+
+    [Header("Ice")]
+    public float maxWalkSpeedIce;
+    public float iceAcceleration;
+    private bool _isInIce = false;
+    private List<Collider> _iceColliders = new List<Collider>();
 
 
     [Header("Misc")]
@@ -144,6 +152,7 @@ public class PlayerMovement : MonoBehaviour
         {
             _removedJump = false;
             _inJump = false;
+            _isInIce = _iceColliders.Count > 0;
             Land();   
         }
         else
@@ -257,11 +266,12 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 fixedMovement = transform.TransformVector(moveVec).normalized;
 
-        float maxSpeed = maxWalkSpeed;
+        float maxSpeed = _isInIce ? maxWalkSpeedIce : maxWalkSpeed;
+        float accel = _isInIce ? iceAcceleration : groundAcceleration;
 
         // Move vel vector towards target vel
         Vector3 velXZ = new Vector3(vel.x, 0, vel.z);
-        Vector3 newVelXZ = Vector3.MoveTowards(velXZ, maxSpeed * fixedMovement, groundAcceleration * Time.deltaTime);
+        Vector3 newVelXZ = Vector3.MoveTowards(velXZ, maxSpeed * fixedMovement, accel * Time.deltaTime);
         vel = new Vector3(newVelXZ.x, vel.y, newVelXZ.z);
 
         movedDistance += newVelXZ.magnitude * Time.deltaTime;
@@ -499,6 +509,28 @@ public class PlayerMovement : MonoBehaviour
     public void OnFlameThrowerDeactivate()
     {
         _isHovering = false;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("Ice"))
+        {
+            if (!_iceColliders.Contains(other))
+            {
+                _iceColliders.Add(other);
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Ice"))
+        {
+            if (_iceColliders.Contains(other))
+            {
+                _iceColliders.Remove(other);
+            }
+        }
     }
 
     #endregion

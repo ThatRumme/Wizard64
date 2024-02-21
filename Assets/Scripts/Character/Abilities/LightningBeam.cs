@@ -12,7 +12,7 @@ public class LightningBeam : Ability
 
         
         //Layermask everything except these layers
-        int layerMask = 1 << LayerMask.NameToLayer("IgnoreRaycast") | 1 << LayerMask.NameToLayer("Player");
+        int layerMask = 1 << LayerMask.NameToLayer("Ignore Raycast") | 1 << LayerMask.NameToLayer("Player");
         layerMask = ~layerMask;
 
         RaycastHit hit;
@@ -41,7 +41,7 @@ public class LightningBeam : Ability
         }
         else
         {
-            Debug.DrawRay(transform.position, Camera.main.transform.TransformDirection(Vector3.forward) * 100, Color.yellow, 2);
+            Debug.DrawRay(transform.position, Camera.main.transform.TransformDirection(Vector3.forward) * maxRange, Color.yellow, 2);
         }
         
     }
