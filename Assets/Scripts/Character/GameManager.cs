@@ -19,6 +19,8 @@ using UnityEngine.InputSystem;
         // Misc
         public PlayerInput inputs;
 
+        public Player player;
+
         private void Awake()
         {
             inputs = InputManager.Instance.inputs;

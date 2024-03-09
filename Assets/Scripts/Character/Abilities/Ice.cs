@@ -7,7 +7,6 @@ public class Ice : Ability
 
     public AbilityHitBox HitBox;
 
-    public float interval = 0.5f;
     public float maxDuration = 3f;
     public float maxRange = 5f;
 
@@ -15,6 +14,7 @@ public class Ice : Ability
 
     public Vector3[] raycasts;
 
+    public ParticleSystem particleEffect;
     
 
     public override void Activate()
@@ -36,18 +36,15 @@ public class Ice : Ability
             {
                 Debug.Log(hit.collider.gameObject.name);
                 GameObject decal = Instantiate(iceDecal, hit.point, Quaternion.Euler(90, 0, 0));
-
-            }
-            else
-            {
-                Debug.DrawRay(transform.position, Camera.main.transform.TransformDirection(dir) * maxRange, Color.blue, 2);
             }
         }
 
+        for(int i = 0; i < HitBox.enemiesInTrigger.Count; ++i)
+        {
+            HitBox.enemiesInTrigger[i].Freeze();
+        }
 
-        
-
-
+        particleEffect.Play();
     }
     public override void Deactivate()
     {
@@ -63,4 +60,5 @@ public class Ice : Ability
     {
         base.SwitchOff();
     }
+
 }

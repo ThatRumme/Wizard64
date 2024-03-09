@@ -37,7 +37,7 @@ public class AbilityHitBox : MonoBehaviour
         {
             Enemy enemy = other.GetComponent<Enemy>();
             if (enemy != null && enemiesInTrigger.Contains(enemy))
-            {;
+            {
                 enemiesInTrigger.Remove(enemy);
             }
         }
