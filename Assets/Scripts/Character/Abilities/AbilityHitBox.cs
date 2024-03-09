@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 public class AbilityHitBox : MonoBehaviour
 {
@@ -39,6 +40,28 @@ public class AbilityHitBox : MonoBehaviour
             if (enemy != null && enemiesInTrigger.Contains(enemy))
             {
                 enemiesInTrigger.Remove(enemy);
+            }
+        }
+    }
+
+    public void CheckForEnemiesDeleted()
+    {
+
+        List<Enemy> enemiesToDelete = new List<Enemy>();
+
+        for (int i = 0; i < enemiesInTrigger.Count; ++i)
+        {
+            if (enemiesInTrigger[i] == null)
+            {
+                enemiesToDelete.Add(enemiesInTrigger[i]);
+            }
+        }
+
+        if(enemiesToDelete.Count > 0)
+        {
+            for (int i = 0; i < enemiesToDelete.Count; ++i)
+            {
+                enemiesInTrigger.Remove(enemiesToDelete[i]);
             }
         }
     }

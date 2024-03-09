@@ -61,6 +61,7 @@ public class AbilityHandler : MonoBehaviour
                 currentAbilityIdx++;
             }
             abilities[currentAbilityIdx].SwitchOn();
+            EventManager.OnAbilitySwitched(currentAbilityIdx);
 
         }
     }
@@ -79,6 +80,7 @@ public class AbilityHandler : MonoBehaviour
                 currentAbilityIdx--;
             }
             abilities[currentAbilityIdx].SwitchOn();
+            EventManager.OnAbilitySwitched(currentAbilityIdx);
         }
     }
 

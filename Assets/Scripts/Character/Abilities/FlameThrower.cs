@@ -7,6 +7,12 @@ public class FlameThrower : Ability
 
     //public vars
     public float maxDuration;
+    public int damage;
+    public float secondsPerHit = 0.2f;
+    public AbilityHitBox HitBoxForward;
+    public AbilityHitBox HitBoxDownward;
+    public ParticleSystem particleEffectForward;
+    public ParticleSystem particleEffectDownward;
 
 
     //private vars
@@ -14,6 +20,7 @@ public class FlameThrower : Ability
     private bool usedMidAir = false;
 
     private int currentPressId = 0;
+    private float attackHitTimer = 0;
 
     public override void Activate()
     {
@@ -28,6 +35,11 @@ public class FlameThrower : Ability
             if (usedMidAir)
             {
                 playerMovement.OnFlameThrowerActivate();
+                particleEffectDownward.Play();
+            }
+            else
+            {
+                particleEffectForward.Play();
             }
 
             StartCoroutine(TurnOffTimer());
@@ -42,6 +54,8 @@ public class FlameThrower : Ability
             {
                 playerMovement.OnFlameThrowerDeactivate();
             }
+            particleEffectDownward.Stop();
+            particleEffectForward.Stop();
         }
     }
 
@@ -57,13 +71,39 @@ public class FlameThrower : Ability
 
     private void Update()
     {
-        
+        if (isInUse)
+        {
+            attackHitTimer += Time.deltaTime;
+            if(attackHitTimer > secondsPerHit)
+            {
+                attackHitTimer -= secondsPerHit;
+                AttackEnemies();
+            }
+        }
     }
 
     protected override void ResetValues()
     {
         isInUse = false;
         base.ResetValues();
+    }
+
+    private void AttackEnemies()
+    {
+
+        AbilityHitBox hitBox = usedMidAir ? HitBoxDownward : HitBoxForward;
+
+        for (int i = 0; i < hitBox.enemiesInTrigger.Count; ++i)
+        {
+            if (hitBox.enemiesInTrigger[i] != null)
+            {
+                hitBox.enemiesInTrigger[i].TakeDamage(damage);
+            }
+            
+        }
+        hitBox.CheckForEnemiesDeleted();
+
+        
     }
 
     IEnumerator TurnOffTimer()
