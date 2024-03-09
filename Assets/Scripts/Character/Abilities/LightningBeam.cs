@@ -6,6 +6,7 @@ public class LightningBeam : Ability
 {
 
     public int maxRange = 100;
+    public int damage = 10;
     public override void Activate()
     {
         base.Activate();
@@ -21,6 +22,7 @@ public class LightningBeam : Ability
         if (hit.collider)
         {
             bool hitInteractableObject = false;
+            bool hitEnemy = false;
             
             if(hit.collider.CompareTag("Interactable_Electric"))
             {
@@ -28,10 +30,16 @@ public class LightningBeam : Ability
                 hit.collider.gameObject.GetComponent<ElectricTrigger>().Activate();
             }
 
-            if(hitInteractableObject)
+            if (hit.collider.CompareTag("Enemy"))
+            {
+                hitEnemy = true;
+                hit.collider.gameObject.GetComponent<Enemy>().TakeDamage(10);
+            }
+
+            if (hitInteractableObject || hitEnemy)
             {
                 Vector3 dist = hit.collider.transform.position - transform.position;
-
+                //TODO: Visually draw ray to target
                 Debug.DrawRay(transform.position, dist.normalized * hit.distance, Color.yellow, 2);
             }
             else
