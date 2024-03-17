@@ -28,8 +28,6 @@ public class Enemy : MonoBehaviour
     protected virtual void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
-        Debug.Log("Has player? " + player != null);
-        Debug.Log("Has player?", player);
         _targetRotation = transform.rotation;
         SetRotationTowardsTarget(new Vector3(0, 20, 0), true);
     }
