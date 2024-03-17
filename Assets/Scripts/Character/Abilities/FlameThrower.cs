@@ -22,7 +22,7 @@ public class FlameThrower : Ability
     private int currentPressId = 0;
     private float attackHitTimer = 0;
 
-    public override void Activate()
+    public override bool Activate()
     {
         if (!isInUse && AllowUse())
         {
@@ -43,8 +43,10 @@ public class FlameThrower : Ability
             }
 
             StartCoroutine(TurnOffTimer());
-            
+
+            return true;
         }
+        return false;
     }
     public override void Deactivate()
     {

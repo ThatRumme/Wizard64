@@ -20,9 +20,9 @@ public class Ability : MonoBehaviour
         this.player = player;
         playerMovement = pm;
     }
-    public virtual void Activate()
+    public virtual bool Activate()
     {
-        
+        return false;
     }
     public virtual void Deactivate()
     {

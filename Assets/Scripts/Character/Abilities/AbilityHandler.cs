@@ -10,6 +10,11 @@ public class AbilityHandler : MonoBehaviour
     public Ability[] abilities;
     private int currentAbilityIdx = 0;
 
+    public int maxMana = 5;
+    public int currentMana = 5;
+    public float manaRegenTimeInSeconds = 2;
+    float manaRegenTimer = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -43,9 +48,22 @@ public class AbilityHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        RegenerateMana();
     }
 
+    void RegenerateMana()
+    {
+        if(currentMana < maxMana)
+        {
+            manaRegenTimer += Time.deltaTime;
+            if (manaRegenTimer > manaRegenTimeInSeconds)
+            {
+                currentMana++;
+                manaRegenTimer = currentMana == maxMana ? 0 : manaRegenTimer -= manaRegenTimeInSeconds;
+                EventManager.OnManaUpdated(currentMana);
+            }
+        }
+    }
 
     void NextAbilityInput(InputAction.CallbackContext context)
     {
@@ -86,13 +104,28 @@ public class AbilityHandler : MonoBehaviour
 
     void UseAbility(InputAction.CallbackContext context)
     {
+        
+
         if (context.performed)
         {
-            abilities[currentAbilityIdx].Activate();
+            if (currentMana <= 0)
+            {
+                return;
+            }
+            
+
+            bool usedAttack = abilities[currentAbilityIdx].Activate();
+            if (usedAttack)
+            {
+                currentMana--;
+                EventManager.OnManaUpdated(currentMana);
+            }
         }
         else if (context.canceled)
         {
             abilities[currentAbilityIdx].Deactivate();
         }
+
+        
     }
 }

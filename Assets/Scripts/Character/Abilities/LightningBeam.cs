@@ -7,11 +7,10 @@ public class LightningBeam : Ability
 
     public int maxRange = 100;
     public int damage = 10;
-    public override void Activate()
+    public override bool Activate()
     {
         base.Activate();
 
-        
         //Layermask everything except these layers
         int layerMask = 1 << LayerMask.NameToLayer("Ignore Raycast") | 1 << LayerMask.NameToLayer("Player");
         layerMask = ~layerMask;
@@ -51,6 +50,8 @@ public class LightningBeam : Ability
         {
             Debug.DrawRay(transform.position, Camera.main.transform.TransformDirection(Vector3.forward) * maxRange, Color.yellow, 2);
         }
+
+        return true;
         
     }
     public override void Deactivate()

@@ -17,7 +17,7 @@ public class Ice : Ability
     public ParticleSystem particleEffect;
     
 
-    public override void Activate()
+    public override bool Activate()
     {
         base.Activate();
 
@@ -45,6 +45,8 @@ public class Ice : Ability
         }
 
         particleEffect.Play();
+
+        return true;
     }
     public override void Deactivate()
     {
