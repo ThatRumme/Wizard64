@@ -17,7 +17,7 @@ public class Enemy : MonoBehaviour
 
     private bool _doMove = false;
 
-    private bool _isFrozen = false;
+    protected bool _isFrozen = false;
     private int _frozenCount = 0;
     private GameObject _iceBlock;
     public GameObject iceBlockPrefab;
@@ -107,6 +107,7 @@ public class Enemy : MonoBehaviour
             Collider collider = GetComponent<Collider>();
             _iceBlock = Instantiate(iceBlockPrefab, collider.bounds.center, Quaternion.identity, transform);
             _iceBlock.transform.localScale = collider.bounds.size * 1.2f;
+            agent.isStopped = true;
         }
         _frozenCount++;
 
@@ -121,6 +122,7 @@ public class Enemy : MonoBehaviour
         if(currentFrozenCount == _frozenCount)
         {
             _isFrozen = false;
+            agent.isStopped = false;
             if(_iceBlock != null)
             {
                 Destroy(_iceBlock);

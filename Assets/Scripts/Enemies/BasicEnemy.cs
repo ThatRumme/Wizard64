@@ -20,28 +20,34 @@ public class BasicEnemy : Enemy
 
     protected override void Update()
     {
-        base.Update();
+       base.Update();
        Move();
        AttemptAttack();
     }
 
     protected virtual void Move()
     {
-        float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
-        if (distanceToPlayer <= detectPlayerRange)
+        if(!_isFrozen)
         {
-            SetTargetPosition(player.transform.position);
+            float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
+            if (distanceToPlayer <= detectPlayerRange)
+            {
+                SetTargetPosition(player.transform.position);
+            }
         }
     }
 
     protected virtual void AttemptAttack()
     {
-        float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
-        if (distanceToPlayer <= attackRange && DateTime.Now.Ticks > lastAttackTime + attackDelay)
+        if (!_isFrozen)
         {
-            Attack();
-            lastAttackTime = DateTime.Now.Ticks;
-        }
+            float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
+            if (distanceToPlayer <= attackRange && DateTime.Now.Ticks > lastAttackTime + attackDelay)
+            {
+                Attack();
+                lastAttackTime = DateTime.Now.Ticks;
+            }
+        } 
         
     }
 }
