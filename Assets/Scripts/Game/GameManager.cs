@@ -24,6 +24,7 @@ using UnityEngine.InputSystem;
         private void Awake()
         {
             inputs = InputManager.Instance.inputs;
+            SaveGame.Instance.LoadData();
         }
 
         private void OnEnable()

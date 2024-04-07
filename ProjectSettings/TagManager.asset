@@ -7,6 +7,7 @@ TagManager:
   - Interactable_Electric
   - Enemy
   - Ice
+  - Collectable
   layers:
   - Default
   - TransparentFX

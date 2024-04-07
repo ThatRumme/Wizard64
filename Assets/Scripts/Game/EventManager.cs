@@ -9,7 +9,8 @@ public class EventManager : MonoBehaviour {
     //Game
     public static event Action ResetLevel;
     public static event Action ApplySettings;
-    public static event Action CollectableObtained;
+    public static event Action<int> RuneObtained;
+    public static event Action<int> CrystalObtained;
     public static event Action<int> AbilitySwitch;
     public static event Action<int> ManaUpdated;
 
@@ -23,9 +24,14 @@ public class EventManager : MonoBehaviour {
         ApplySettings?.Invoke();
     }
 
-    public static void OnCollectableObtained()
+    public static void OnRuneObtained(int id)
     {
-        CollectableObtained?.Invoke();
+        RuneObtained?.Invoke(id);
+    }
+
+    public static void OnCrystalObtained(int id)
+    {
+        CrystalObtained?.Invoke(id);
     }
 
     public static void OnAbilitySwitched(int ability)
