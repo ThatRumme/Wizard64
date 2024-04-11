@@ -1,0 +1,10 @@
+newmtl Sand
+map_Kd Sand Texture 300x300.jpg
+Kd 1 1 1
+d 1
+
+newmtl WallOFTrees
+map_Kd wall of trees.jpg
+Kd 0.3301886 0.261718 0
+d 1
+
