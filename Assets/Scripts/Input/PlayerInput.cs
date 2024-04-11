@@ -116,6 +116,33 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SwitchAbilityForward"",
+                    ""type"": ""Button"",
+                    ""id"": ""abbee502-1386-4986-9a6e-63901812ae11"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SwitchAbilityBackward"",
+                    ""type"": ""Button"",
+                    ""id"": ""dd67ec94-a3a5-4587-b151-e0c0bd853e06"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""UseAbility"",
+                    ""type"": ""Button"",
+                    ""id"": ""a28cd9b0-dbf7-414c-9d6c-7b9f2cb9c9d5"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -228,6 +255,39 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""RecenterCamera"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1dda85df-67a8-40e2-92e3-21061d92ff7b"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchAbilityForward"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1d2686b4-6cff-43cf-b0f2-2e0e168975ec"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchAbilityBackward"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""aa15bd1a-c1b7-43d3-a76c-d1f92a1a3c5e"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseAbility"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -246,6 +306,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Main_MouseX = m_Main.FindAction("MouseX", throwIfNotFound: true);
         m_Main_MouseY = m_Main.FindAction("MouseY", throwIfNotFound: true);
         m_Main_RecenterCamera = m_Main.FindAction("RecenterCamera", throwIfNotFound: true);
+        m_Main_SwitchAbilityForward = m_Main.FindAction("SwitchAbilityForward", throwIfNotFound: true);
+        m_Main_SwitchAbilityBackward = m_Main.FindAction("SwitchAbilityBackward", throwIfNotFound: true);
+        m_Main_UseAbility = m_Main.FindAction("UseAbility", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -317,6 +380,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Main_MouseX;
     private readonly InputAction m_Main_MouseY;
     private readonly InputAction m_Main_RecenterCamera;
+    private readonly InputAction m_Main_SwitchAbilityForward;
+    private readonly InputAction m_Main_SwitchAbilityBackward;
+    private readonly InputAction m_Main_UseAbility;
     public struct MainActions
     {
         private @PlayerInput m_Wrapper;
@@ -331,6 +397,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @MouseX => m_Wrapper.m_Main_MouseX;
         public InputAction @MouseY => m_Wrapper.m_Main_MouseY;
         public InputAction @RecenterCamera => m_Wrapper.m_Main_RecenterCamera;
+        public InputAction @SwitchAbilityForward => m_Wrapper.m_Main_SwitchAbilityForward;
+        public InputAction @SwitchAbilityBackward => m_Wrapper.m_Main_SwitchAbilityBackward;
+        public InputAction @UseAbility => m_Wrapper.m_Main_UseAbility;
         public InputActionMap Get() { return m_Wrapper.m_Main; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -370,6 +439,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @RecenterCamera.started += instance.OnRecenterCamera;
             @RecenterCamera.performed += instance.OnRecenterCamera;
             @RecenterCamera.canceled += instance.OnRecenterCamera;
+            @SwitchAbilityForward.started += instance.OnSwitchAbilityForward;
+            @SwitchAbilityForward.performed += instance.OnSwitchAbilityForward;
+            @SwitchAbilityForward.canceled += instance.OnSwitchAbilityForward;
+            @SwitchAbilityBackward.started += instance.OnSwitchAbilityBackward;
+            @SwitchAbilityBackward.performed += instance.OnSwitchAbilityBackward;
+            @SwitchAbilityBackward.canceled += instance.OnSwitchAbilityBackward;
+            @UseAbility.started += instance.OnUseAbility;
+            @UseAbility.performed += instance.OnUseAbility;
+            @UseAbility.canceled += instance.OnUseAbility;
         }
 
         private void UnregisterCallbacks(IMainActions instance)
@@ -404,6 +482,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @RecenterCamera.started -= instance.OnRecenterCamera;
             @RecenterCamera.performed -= instance.OnRecenterCamera;
             @RecenterCamera.canceled -= instance.OnRecenterCamera;
+            @SwitchAbilityForward.started -= instance.OnSwitchAbilityForward;
+            @SwitchAbilityForward.performed -= instance.OnSwitchAbilityForward;
+            @SwitchAbilityForward.canceled -= instance.OnSwitchAbilityForward;
+            @SwitchAbilityBackward.started -= instance.OnSwitchAbilityBackward;
+            @SwitchAbilityBackward.performed -= instance.OnSwitchAbilityBackward;
+            @SwitchAbilityBackward.canceled -= instance.OnSwitchAbilityBackward;
+            @UseAbility.started -= instance.OnUseAbility;
+            @UseAbility.performed -= instance.OnUseAbility;
+            @UseAbility.canceled -= instance.OnUseAbility;
         }
 
         public void RemoveCallbacks(IMainActions instance)
@@ -433,5 +520,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnMouseX(InputAction.CallbackContext context);
         void OnMouseY(InputAction.CallbackContext context);
         void OnRecenterCamera(InputAction.CallbackContext context);
+        void OnSwitchAbilityForward(InputAction.CallbackContext context);
+        void OnSwitchAbilityBackward(InputAction.CallbackContext context);
+        void OnUseAbility(InputAction.CallbackContext context);
     }
 }
