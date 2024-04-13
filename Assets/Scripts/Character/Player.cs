@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
     public int maxHealth = 20;
     public float timeUntilCanRegenHealth = 4;
     public float secondsForEachHeartRegen = 0.4f;
-    public static int currentHealth = 10;
+    public static int currentHealth = 20;
     float regenTimer = 0;
     float canRegenTimer = 0;
 
@@ -38,6 +38,7 @@ public class Player : MonoBehaviour
     {
         pm = GetComponent<PlayerMovement>();
         transform.position = GameManager.Instance.lm.GetSpawnPoint(spawnIdx);
+        currentHealth = maxHealth;
     }
 
     // Update is called once per frame
@@ -93,7 +94,7 @@ public class Player : MonoBehaviour
     {
         ResetCanRegenTimer();
         currentHealth -= damage;
-        if(currentHealth < 0 )
+        if(currentHealth <= 0 )
         {
             Die();
         }
@@ -108,7 +109,8 @@ public class Player : MonoBehaviour
         transform.position = GameManager.Instance.lm.GetSpawnPoint(spawnIdx);
         currentHealth = maxHealth;
         EventManager.OnPlayerDied();
-        
+        EventManager.OnPlayerHealthUpdated(currentHealth);
+
     }
 
     private void OnTriggerEnter(Collider other)

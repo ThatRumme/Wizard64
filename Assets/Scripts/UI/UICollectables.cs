@@ -61,7 +61,6 @@ public class UICollectables : MonoBehaviour
 
     void OnRuneOptained(int id)
     {
-        Debug.Log("Optained Rune");
         runeCount++;
         UpdateValues();
     }

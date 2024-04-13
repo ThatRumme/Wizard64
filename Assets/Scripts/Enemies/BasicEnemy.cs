@@ -11,11 +11,12 @@ public class BasicEnemy : Enemy
     public float detectPlayerRange = 10;
     public float attackRange = 1;
     public float attackDelay = 1;
-    long lastAttackTime = 0;
+    float attackTimer = 0;
 
     protected override void Start()
     {
         base.Start();
+        attackTimer = attackDelay;
     }
 
     protected override void Update()
@@ -42,10 +43,17 @@ public class BasicEnemy : Enemy
         if (!_isFrozen)
         {
             float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
-            if (distanceToPlayer <= attackRange && DateTime.Now.Ticks > lastAttackTime + attackDelay)
+
+            bool allowAttackTimeWise = attackTimer >= attackDelay;
+            if(!allowAttackTimeWise)
+            {
+                attackTimer += Time.deltaTime;
+            }
+            
+            if (distanceToPlayer <= attackRange && allowAttackTimeWise)
             {
                 Attack();
-                lastAttackTime = DateTime.Now.Ticks;
+                attackTimer = 0;
             }
         } 
         

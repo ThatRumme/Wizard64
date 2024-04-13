@@ -10,6 +10,7 @@ public class Enemy : MonoBehaviour
     public float moveSpeed;
     public float rotationSpeed;
     public float freezeTime = 5f;
+    public int damage = 2;
 
     private Quaternion _targetRotation;
 
@@ -23,6 +24,8 @@ public class Enemy : MonoBehaviour
     public GameObject iceBlockPrefab;
 
     protected GameObject player;
+
+    
 
     // Start is called before the first frame update
     protected virtual void Start()
@@ -42,8 +45,8 @@ public class Enemy : MonoBehaviour
 
     protected virtual void Attack()
     {
-        //TODO: 
-        //Player.TakeDamage().. 
+        player.GetComponent<Player>().TakeDamage(damage);
+       
     }
 
     private void UpdateRotation()
