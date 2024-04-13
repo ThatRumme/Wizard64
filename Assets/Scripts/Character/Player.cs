@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
@@ -18,6 +19,12 @@ public class Player : MonoBehaviour
     float regenTimer = 0;
     float canRegenTimer = 0;
 
+    [Header("Melee")]
+    public int meleeDamage = 4;
+    public float meleeAttackDelay = 0.5f;
+    private float meleeAttackTimer = 0;
+    public AbilityHitBox meleeHitBox;
+    public Transform staffPivot;
 
     [Header("Misc")]
     public int spawnIdx = 0;
@@ -30,15 +37,24 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         GameManager.Instance.player = this;
-
     }
 
     // Start is called before the first frame update
     void Start()
     {
         pm = GetComponent<PlayerMovement>();
+
+        inputs = GameManager.Instance.inputs;
+        inputs.Main.Fire1.performed += AttemptMeleeAttack;
+
         transform.position = GameManager.Instance.lm.GetSpawnPoint(spawnIdx);
         currentHealth = maxHealth;
+        meleeAttackTimer = meleeAttackDelay;
+    }
+
+    private void OnDestroy()
+    {
+        inputs.Main.Fire1.performed -= AttemptMeleeAttack;
     }
 
     // Update is called once per frame
@@ -48,6 +64,7 @@ public class Player : MonoBehaviour
         //    return;
 
         RegenerateHealth();
+        IncrementMeleeTimer();
     }
 
     #endregion
@@ -60,6 +77,43 @@ public class Player : MonoBehaviour
 
     private void OnDisable()
     {
+    }
+
+    private void AttemptMeleeAttack(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            MeleeAttack();
+        }
+    }
+
+    private void MeleeAttack()
+    {
+        if (meleeAttackTimer < meleeAttackDelay) return;
+        staffPivot.transform.DOLocalRotateQuaternion(Quaternion.Euler(90, 0, 0), 0.1f).SetEase(Ease.Linear).OnComplete(DealMeleeDamage);
+        meleeAttackTimer = 0;
+    }
+
+    private void DealMeleeDamage()
+    {
+        foreach(Enemy enemy in meleeHitBox.enemiesInTrigger)
+        {
+
+            if (enemy != null)
+            {
+                enemy.TakeDamage(meleeDamage);
+            }
+            
+        }
+        staffPivot.transform.DOLocalRotateQuaternion(Quaternion.Euler(0, 0, 0), 0.1f).SetDelay(0.1f).SetEase(Ease.Linear);
+    }
+
+    private void IncrementMeleeTimer()
+    {
+        if(meleeAttackTimer <= meleeAttackDelay)
+        {
+            meleeAttackTimer += Time.deltaTime;
+        }
     }
 
     void RegenerateHealth()
