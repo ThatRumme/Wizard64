@@ -17591,6 +17591,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 534857768}
+    - target: {fileID: 4111711646473174690, guid: 6f455d7bfc94bad4c8bb7be275a31152,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 6906677183558152374, guid: 6f455d7bfc94bad4c8bb7be275a31152,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -17645,6 +17650,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Crystal
+      objectReference: {fileID: 0}
+    - target: {fileID: 7340266397327288627, guid: 6f455d7bfc94bad4c8bb7be275a31152,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -17742,10 +17752,20 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 415779266}
+    - target: {fileID: 4316953857800215422, guid: 9738665b4f9448f44b9545deb7bef603,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 5202628350390685784, guid: 9738665b4f9448f44b9545deb7bef603,
         type: 3}
       propertyPath: m_Name
       value: Rune
+      objectReference: {fileID: 0}
+    - target: {fileID: 5202628350390685784, guid: 9738665b4f9448f44b9545deb7bef603,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 6005381239988466580, guid: 9738665b4f9448f44b9545deb7bef603,
         type: 3}
