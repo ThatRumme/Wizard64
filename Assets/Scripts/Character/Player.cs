@@ -173,6 +173,10 @@ public class Player : MonoBehaviour
         {
             other.GetComponentInParent<Collectable>().PickUp();
         }
+        else if (other.CompareTag("KillTrigger"))
+        {
+            Die();
+        }
     }
 
     private void OnTriggerExit(Collider other)
