@@ -13,6 +13,8 @@ public class EventManager : MonoBehaviour {
     public static event Action<int> CrystalObtained;
     public static event Action<int> AbilitySwitch;
     public static event Action<int> ManaUpdated;
+    public static event Action PlayerDeath;
+    public static event Action<int> PlayerHealthUpdated;
 
     public static void OnResetLevel()
     {
@@ -42,5 +44,14 @@ public class EventManager : MonoBehaviour {
     public static void OnManaUpdated(int ability)
     {
         ManaUpdated?.Invoke(ability);
+    }
+
+    public static void OnPlayerDied()
+    {
+        PlayerDeath?.Invoke();
+    }
+    public static void OnPlayerHealthUpdated(int newHealth)
+    {
+        PlayerHealthUpdated?.Invoke(newHealth);
     }
 }

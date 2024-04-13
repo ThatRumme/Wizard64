@@ -21,6 +21,8 @@ using UnityEngine.InputSystem;
 
         public Player player;
 
+        public LevelManager lm;
+
         private void Awake()
         {
             inputs = InputManager.Instance.inputs;
@@ -48,6 +50,11 @@ using UnityEngine.InputSystem;
         {
             if (!gameActive)
                 return;
+        }
+
+        public void SetLevelManager(LevelManager lm)
+        {
+            this.lm = lm;
         }
 
 

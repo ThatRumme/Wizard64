@@ -11,6 +11,15 @@ public class LevelManager : MonoBehaviour
     public Crystal[] crystals;
     public Rune[] runes;
 
+    public Transform[] spawnPoints;
+
+
+
+    private void Awake()
+    {
+        GameManager.Instance.SetLevelManager(this);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -67,5 +76,10 @@ public class LevelManager : MonoBehaviour
     public void OnPickupCrystal(int id)
     {
         SaveGame.Instance.OptainedCrystal(levelId, id);
+    }
+
+    public Vector3 GetSpawnPoint(int idx)
+    {
+        return spawnPoints[idx].position;
     }
 }

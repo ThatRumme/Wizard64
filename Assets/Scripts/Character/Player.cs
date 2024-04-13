@@ -10,6 +10,18 @@ public class Player : MonoBehaviour
 
     PlayerInput inputs;
 
+    [Header("Health")]
+    public int maxHealth = 20;
+    public float timeUntilCanRegenHealth = 4;
+    public float secondsForEachHeartRegen = 0.4f;
+    public static int currentHealth = 10;
+    float regenTimer = 0;
+    float canRegenTimer = 0;
+
+
+    [Header("Misc")]
+    public int spawnIdx = 0;
+
     #endregion
 
     #region Start, Awake, Update
@@ -25,7 +37,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         pm = GetComponent<PlayerMovement>();
-
+        transform.position = GameManager.Instance.lm.GetSpawnPoint(spawnIdx);
     }
 
     // Update is called once per frame
@@ -33,11 +45,11 @@ public class Player : MonoBehaviour
     {
         //if (!gm.gameActive)
         //    return;
+
+        RegenerateHealth();
     }
 
     #endregion
-
-
 
     private void OnEnable()
     {
@@ -49,11 +61,60 @@ public class Player : MonoBehaviour
     {
     }
 
+    void RegenerateHealth()
+    {
+        if (currentHealth == maxHealth) return;
+
+
+        if(canRegenTimer >= timeUntilCanRegenHealth)
+        {
+            if(regenTimer >= secondsForEachHeartRegen)
+            {
+                regenTimer -= secondsForEachHeartRegen;
+                currentHealth = Mathf.Min(currentHealth+1, maxHealth);
+            }
+            else
+            {
+                regenTimer += Time.deltaTime;
+            }
+        }
+        else
+        {
+            canRegenTimer += Time.deltaTime;
+        }
+    }
+
+    void ResetCanRegenTimer()
+    {
+        canRegenTimer = 0;
+    }
+
+    public void TakeDamage(int damage)
+    {
+        ResetCanRegenTimer();
+        currentHealth -= damage;
+        if(currentHealth < 0 )
+        {
+            Die();
+        }
+        else
+        {
+            EventManager.OnPlayerHealthUpdated(currentHealth);
+        }
+    }
+
+    private void Die()
+    {
+        transform.position = GameManager.Instance.lm.GetSpawnPoint(spawnIdx);
+        currentHealth = maxHealth;
+        EventManager.OnPlayerDied();
+        
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Collectable"))
         {
-            Debug.Log("Pick up???");
             other.GetComponentInParent<Collectable>().PickUp();
         }
     }
