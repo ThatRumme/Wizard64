@@ -143,6 +143,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""96ed51cb-be82-47ae-9db0-48bcfaaa8618"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -248,7 +257,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""a83961d7-cccf-4096-991c-7ec1170f6fd4"",
-                    ""path"": ""<Keyboard>/f"",
+                    ""path"": ""<Keyboard>/r"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -288,6 +297,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""UseAbility"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9d5bdb84-0d6e-46e2-984a-cccb6a64622c"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -309,6 +329,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Main_SwitchAbilityForward = m_Main.FindAction("SwitchAbilityForward", throwIfNotFound: true);
         m_Main_SwitchAbilityBackward = m_Main.FindAction("SwitchAbilityBackward", throwIfNotFound: true);
         m_Main_UseAbility = m_Main.FindAction("UseAbility", throwIfNotFound: true);
+        m_Main_Interact = m_Main.FindAction("Interact", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -383,6 +404,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Main_SwitchAbilityForward;
     private readonly InputAction m_Main_SwitchAbilityBackward;
     private readonly InputAction m_Main_UseAbility;
+    private readonly InputAction m_Main_Interact;
     public struct MainActions
     {
         private @PlayerInput m_Wrapper;
@@ -400,6 +422,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @SwitchAbilityForward => m_Wrapper.m_Main_SwitchAbilityForward;
         public InputAction @SwitchAbilityBackward => m_Wrapper.m_Main_SwitchAbilityBackward;
         public InputAction @UseAbility => m_Wrapper.m_Main_UseAbility;
+        public InputAction @Interact => m_Wrapper.m_Main_Interact;
         public InputActionMap Get() { return m_Wrapper.m_Main; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -448,6 +471,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @UseAbility.started += instance.OnUseAbility;
             @UseAbility.performed += instance.OnUseAbility;
             @UseAbility.canceled += instance.OnUseAbility;
+            @Interact.started += instance.OnInteract;
+            @Interact.performed += instance.OnInteract;
+            @Interact.canceled += instance.OnInteract;
         }
 
         private void UnregisterCallbacks(IMainActions instance)
@@ -491,6 +517,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @UseAbility.started -= instance.OnUseAbility;
             @UseAbility.performed -= instance.OnUseAbility;
             @UseAbility.canceled -= instance.OnUseAbility;
+            @Interact.started -= instance.OnInteract;
+            @Interact.performed -= instance.OnInteract;
+            @Interact.canceled -= instance.OnInteract;
         }
 
         public void RemoveCallbacks(IMainActions instance)
@@ -523,5 +552,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnSwitchAbilityForward(InputAction.CallbackContext context);
         void OnSwitchAbilityBackward(InputAction.CallbackContext context);
         void OnUseAbility(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
     }
 }

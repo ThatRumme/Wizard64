@@ -8,6 +8,9 @@ TagManager:
   - Enemy
   - Ice
   - Collectable
+  - KillTrigger
+  - Dialog
+  - Interaction
   layers:
   - Default
   - TransparentFX

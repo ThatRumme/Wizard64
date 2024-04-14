@@ -29,6 +29,8 @@ public class Player : MonoBehaviour
     [Header("Misc")]
     public int spawnIdx = 0;
 
+    private Interaction currentInteraction;
+
     #endregion
 
     #region Start, Awake, Update
@@ -46,6 +48,7 @@ public class Player : MonoBehaviour
 
         inputs = GameManager.Instance.inputs;
         inputs.Main.Fire1.performed += AttemptMeleeAttack;
+        inputs.Main.Interact.performed += OnInteractKey;
 
         transform.position = GameManager.Instance.lm.GetSpawnPoint(spawnIdx);
         currentHealth = maxHealth;
@@ -84,6 +87,17 @@ public class Player : MonoBehaviour
         if (context.performed)
         {
             MeleeAttack();
+        }
+    }
+
+    private void OnInteractKey(InputAction.CallbackContext context)
+    {
+        if(context.performed)
+        {
+            if (currentInteraction)
+            {
+                currentInteraction.OnPressedForInteraction();
+            }
         }
     }
 
@@ -177,11 +191,29 @@ public class Player : MonoBehaviour
         {
             Die();
         }
+        else if (other.CompareTag("Interaction"))
+        {
+            if(currentInteraction != null)
+            {
+                currentInteraction.OnLeaveInteractionHitBox();
+            }
+            Interaction interaction = other.GetComponent<Interaction>();
+            currentInteraction = interaction;
+            interaction.OnEnterInteractionHitBox();
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        
+        if (other.CompareTag("Interaction"))
+        {
+            Interaction interaction = other.GetComponent<Interaction>();
+            interaction.OnLeaveInteractionHitBox();
+            if(currentInteraction == interaction)
+            {
+                currentInteraction = null;
+            }
+        }
     }
 
 }
