@@ -25,7 +25,13 @@ public class Enemy : MonoBehaviour
 
     protected GameObject player;
 
-    
+    protected bool isChasingPlayer = false;
+    protected Vector3 targetPos;
+
+    private bool hasTriggeredArrivedAtTargetPos = false;
+
+    private Vector3 oldPos;
+    private Vector3 oldVel;
 
     // Start is called before the first frame update
     protected virtual void Start()
@@ -38,10 +44,30 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     protected virtual void Update()
     {
+        if (IsMoving())
+        {
+            RotateToFaceMovingDirection();
+        }
+        else if (HasReachedTargetLocation() && !hasTriggeredArrivedAtTargetPos)
+        {
+            OnArrivingAtTargetPosition();
+        }
+
 
         UpdateRotation();
     }
 
+    private void LateUpdate()
+    {
+        oldPos = transform.position;
+        //oldVel = 
+    }
+
+    protected bool IsMoving()
+    {
+
+        return agent.velocity.magnitude > 0;
+    }
 
     protected virtual void Attack()
     {
@@ -59,15 +85,41 @@ public class Enemy : MonoBehaviour
 
     protected void SetTargetPosition(Vector3 pos)
     {
+        targetPos = pos;
         agent.SetDestination(pos);
+        hasTriggeredArrivedAtTargetPos = false;
     }
 
-    protected void RotateToFacePlayer(Vector3 euler)
+
+    protected void RotateToFacePlayer()
     {
         if (GameManager.Instance.player)
         {
-            SetTargetPosition(GameManager.Instance.player.transform.position);
+            SetRotationTowardsTarget(GameManager.Instance.player.transform.position);
         }
+    }
+    protected void RotateToFaceMovingDirection()
+    {
+        //Vector3 dir = (transform.position - oldPos);
+        //if (dir.magnitude > 0)
+        //{
+        //    SetRotationTowardsTarget(transform.position + dir);
+        //}
+
+        if (agent.desiredVelocity.magnitude > 0)
+        {
+            SetRotationTowardsTarget(transform.position + agent.desiredVelocity);
+        }
+        
+
+    }
+
+    protected virtual void OnArrivingAtTargetPosition()
+    {
+        //... 
+        //override for functionality
+
+        hasTriggeredArrivedAtTargetPos = true;
     }
 
     protected void SetRotationTowardsTarget(Vector3 target, bool onlyYAxis = true, bool force = false)
@@ -132,5 +184,19 @@ public class Enemy : MonoBehaviour
             }
         }
         
+    }
+
+    protected bool HasReachedTargetLocation()
+    {
+       
+
+        Vector2 currentPos2d = new Vector2(transform.position.x, transform.position.z);
+        Vector2 targetPos2d = new Vector2(targetPos.x, targetPos.z);
+
+        if (Vector3.Distance(currentPos2d, targetPos2d) <= agent.stoppingDistance)
+        {
+            return true;
+        }
+        return false;
     }
 }

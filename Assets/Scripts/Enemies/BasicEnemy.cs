@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEngine.GraphicsBuffer;
 
 public class BasicEnemy : Enemy
 {
@@ -28,12 +29,17 @@ public class BasicEnemy : Enemy
 
     protected virtual void Move()
     {
-        if(!_isFrozen)
+        if (!_isFrozen)
         {
-            float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
-            if (distanceToPlayer <= detectPlayerRange)
+            if (IsWithinChaseRangeOfPlayer())
             {
+                
+                isChasingPlayer = true;
                 SetTargetPosition(player.transform.position);
+            }
+            else
+            {
+                isChasingPlayer = false;
             }
         }
     }
@@ -42,20 +48,30 @@ public class BasicEnemy : Enemy
     {
         if (!_isFrozen)
         {
-            float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
-
             bool allowAttackTimeWise = attackTimer >= attackDelay;
             if(!allowAttackTimeWise)
             {
                 attackTimer += Time.deltaTime;
             }
             
-            if (distanceToPlayer <= attackRange && allowAttackTimeWise)
+            if (IsWithinAttackRangeOfPlayer() && allowAttackTimeWise)
             {
                 Attack();
                 attackTimer = 0;
             }
         } 
         
+    }
+
+
+    protected bool IsWithinChaseRangeOfPlayer()
+    {
+        float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
+        return distanceToPlayer <= detectPlayerRange;
+    }
+    protected bool IsWithinAttackRangeOfPlayer()
+    {
+        float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
+        return distanceToPlayer <= attackRange;
     }
 }
