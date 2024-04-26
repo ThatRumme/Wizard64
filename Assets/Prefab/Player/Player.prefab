@@ -177,8 +177,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   idx: 1
+  staffCrystal: {fileID: 1259759005646430900}
   maxRange: 100
   damage: 10
+  lightningPrefab: {fileID: 4156402777644609771, guid: 58b70a69805c7b845bf08e255aea2278,
+    type: 3}
 --- !u!1 &1318215086575206921
 GameObject:
   m_ObjectHideFlags: 0
@@ -6453,6 +6456,37 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1 &4926059309510982544
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1259759005646430900}
+  m_Layer: 6
+  m_Name: StaffCrystal
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1259759005646430900
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4926059309510982544}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.062, y: 0.297, z: 0.066}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6107275062471844716}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5204139321458555481
 GameObject:
   m_ObjectHideFlags: 0
@@ -7235,6 +7269,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6538072681885415990}
+  - {fileID: 1259759005646430900}
   m_Father: {fileID: 5204139321458555483}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8155884289656460033
@@ -17094,6 +17129,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   idx: 2
+  staffCrystal: {fileID: 0}
   HitBox: {fileID: 8388642733764055393}
   maxDuration: 3
   maxRange: 7
@@ -17152,6 +17188,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   idx: 0
+  staffCrystal: {fileID: 0}
   maxDuration: 3
   damage: 1
   secondsPerHit: 0.2

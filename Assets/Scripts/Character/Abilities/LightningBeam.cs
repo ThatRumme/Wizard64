@@ -1,71 +1,111 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LightningBeam : Ability
+public class LightningBeam : MonoBehaviour
 {
 
-    public int maxRange = 100;
-    public int damage = 10;
-    public override bool Activate()
+
+    public LineRenderer lr;
+
+    public Transform endTransform;
+    public Vector3 endPos;
+    public float unitsPerPoint = 10;
+    public float radius = 0.5f;
+
+    float updateTimer = 0;
+    public float timePerUpdate = 0.1f;
+
+    public float lineWidth = 0.25f;
+
+    Transform staffCrystal;
+
+    // Start is called before the first frame update
+    void Start()
     {
-        base.Activate();
 
-        //Layermask everything except these layers
-        int layerMask = 1 << LayerMask.NameToLayer("Ignore Raycast") | 1 << LayerMask.NameToLayer("Player");
-        layerMask = ~layerMask;
+    }
 
-        RaycastHit hit;
-        // Does the ray intersect any objects excluding the player layer
-        Physics.Raycast(transform.position, Camera.main.transform.TransformDirection(Vector3.forward), out hit, maxRange, layerMask);
-        if (hit.collider)
+    public void Setup(Transform staffCrystal, Transform endTransform, Vector3 endPos)
+    {
+        this.staffCrystal = staffCrystal;
+        this.transform.position = staffCrystal.position;
+        this.endTransform = endTransform;
+        this.endPos = endPos;
+
+        transform.LookAt(endPos);
+
+        UpdatePoints();
+
+        void TweenOnComplete()
         {
-            bool hitInteractableObject = false;
-            bool hitEnemy = false;
+            Destroy(this.gameObject);
+        }
+
+        lr.material.DOColor(new Color(1, 1, 1, 0), 1).SetEase(Ease.InCubic).OnComplete(TweenOnComplete);
+
+    }
+
+    private void Update()
+    {
+        if (staffCrystal == null) return;
+
+        updateTimer += Time.deltaTime;
+        if(updateTimer > timePerUpdate)
+        {
+            updateTimer -= timePerUpdate;
+            UpdatePoints();
+        }
+
+        transform.position = staffCrystal.position;
+        lr.SetPosition(0, staffCrystal.position);
+
+        if(endTransform != null)
+        {
+            endPos = endTransform.position;
             
-            if(hit.collider.CompareTag("Interactable_Electric"))
-            {
-                hitInteractableObject = true;
-                hit.collider.gameObject.GetComponent<ElectricTrigger>().Activate();
-            }
-
-            if (hit.collider.CompareTag("Enemy"))
-            {
-                hitEnemy = true;
-                hit.collider.gameObject.GetComponent<Enemy>().TakeDamage(10);
-            }
-
-            if (hitInteractableObject || hitEnemy)
-            {
-                Vector3 dist = hit.collider.transform.position - transform.position;
-                //TODO: Visually draw ray to target
-                Debug.DrawRay(transform.position, dist.normalized * hit.distance, Color.yellow, 2);
-            }
-            else
-            {
-                Debug.DrawRay(transform.position, Camera.main.transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow, 2);
-            }
         }
-        else
+        lr.SetPosition(lr.positionCount - 1, endTransform.position);
+        transform.LookAt(endPos);
+    }
+
+    private void UpdatePoints()
+    {
+
+        Vector3[] points = CalculatePoints(staffCrystal.position, endPos);
+
+        lr.positionCount = points.Length;
+        lr.SetPositions(points);
+    }
+
+    Vector3[] CalculatePoints(Vector3 startPos, Vector3 endPos)
+    {
+        Vector3 line = endPos - startPos;
+        int pointCount = (int)Mathf.Floor(line.magnitude/unitsPerPoint) + 2;
+        if (line.magnitude % unitsPerPoint < 4) pointCount--;
+
+        pointCount = Mathf.Max(pointCount, 4);
+
+        Vector3[] points = new Vector3[pointCount];
+
+        points[0] = startPos;
+        points[points.Length-1] = endPos;
+
+        for(int i = 1; i < points.Length-1; i++)
         {
-            Debug.DrawRay(transform.position, Camera.main.transform.TransformDirection(Vector3.forward) * maxRange, Color.yellow, 2);
+
+            float lengthBetweenPoints = pointCount == 4 ? i*(unitsPerPoint/3) : i * unitsPerPoint;
+
+            Vector3 linePoint = startPos + line.normalized * lengthBetweenPoints;
+            int angle = UnityEngine.Random.Range(0, 360);
+
+            Vector3 dirToPointLine = Quaternion.AngleAxis(angle, transform.forward) * transform.right;
+            Vector3 point = dirToPointLine.normalized * radius;
+            points[i] = linePoint + point;
         }
 
-        return true;
-        
-    }
-    public override void Deactivate()
-    {
-        base.Deactivate();
-    }
 
-    public override void SwitchOn()
-    {
-        base.SwitchOn();
-    }
-
-    public override void SwitchOff()
-    {
-        base.SwitchOff();
+        return points;
     }
 }

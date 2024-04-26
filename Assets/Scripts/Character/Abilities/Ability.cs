@@ -7,6 +7,8 @@ public class Ability : MonoBehaviour
     protected Player player;
     protected PlayerMovement playerMovement;
 
+    public Transform staffCrystal;
+
     protected bool isEnabled = false;
 
     protected bool AllowUse()
