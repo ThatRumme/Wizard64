@@ -80,7 +80,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.5
+    widthMultiplier: 0.3
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -177,9 +177,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lr: {fileID: 1897289681461485088}
-  endTransform: {fileID: 0}
+  targetObj: {fileID: 0}
   endPos: {x: 0, y: 0, z: 0}
   unitsPerPoint: 5
   radius: 0.2
   timePerUpdate: 0.1
-  lineWidth: 0.5
+  lineWidth: 0.3
+  hitmarkerPrefab: {fileID: 5255629501471689171, guid: 8cd96a6f4b6891544bb86f97f1bcca32,
+    type: 3}

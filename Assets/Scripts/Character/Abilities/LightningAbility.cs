@@ -21,7 +21,9 @@ public class LightningAbility : Ability
         Transform camTransform = Camera.main.transform;
 
         Vector3 endPos = transform.position + (camTransform.TransformDirection(Vector3.forward) * maxRange);
-        Transform endTransform = null;
+        GameObject targetPos = null;
+        bool hitSomething = false;
+        Vector3 faceNormal = Vector3.zero;
 
         RaycastHit hit;
         // Does the ray intersect any objects excluding the player layer
@@ -46,17 +48,20 @@ public class LightningAbility : Ability
 
             if (hitInteractableObject || hitEnemy)
             {
+                
                 endPos = hit.collider.transform.position;
-                endTransform = hit.collider.transform;
+                targetPos = hit.collider.gameObject;
             }
             else
             {
                 endPos = hit.point;
             }
+            hitSomething = true;
+            faceNormal = hit.normal;
         }
 
         LightningBeam lb = Instantiate(lightningPrefab).GetComponent<LightningBeam>();
-        lb.Setup(staffCrystal, endTransform, endPos);
+        lb.Setup(staffCrystal, targetPos, endPos, hitSomething, faceNormal);
 
         return true;
         

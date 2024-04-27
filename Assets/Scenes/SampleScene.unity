@@ -11265,6 +11265,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.375
       objectReference: {fileID: 0}
+    - target: {fileID: 9001201181106819396, guid: e6d786d4d93eed24fa3224dd55cd12fd,
+        type: 3}
+      propertyPath: damage
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -27709,6 +27714,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: LightningHitMarker
+      objectReference: {fileID: 0}
+    - target: {fileID: 5255629501471689171, guid: 8cd96a6f4b6891544bb86f97f1bcca32,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5581676375930896977, guid: 8cd96a6f4b6891544bb86f97f1bcca32,
         type: 3}

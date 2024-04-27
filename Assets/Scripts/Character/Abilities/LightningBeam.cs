@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +10,7 @@ public class LightningBeam : MonoBehaviour
 
     public LineRenderer lr;
 
-    public Transform endTransform;
+    public GameObject targetObj;
     public Vector3 endPos;
     public float unitsPerPoint = 10;
     public float radius = 0.5f;
@@ -19,7 +20,10 @@ public class LightningBeam : MonoBehaviour
 
     public float lineWidth = 0.25f;
 
-    Transform staffCrystal;
+    Transform startTransform;
+
+    public GameObject hitmarkerPrefab;
+    GameObject hitmarker;
 
     // Start is called before the first frame update
     void Start()
@@ -27,11 +31,11 @@ public class LightningBeam : MonoBehaviour
 
     }
 
-    public void Setup(Transform staffCrystal, Transform endTransform, Vector3 endPos)
+    public void Setup(Transform startTransform, GameObject targetObj, Vector3 endPos, bool hitSomething, Vector3 faceNormal)
     {
-        this.staffCrystal = staffCrystal;
-        this.transform.position = staffCrystal.position;
-        this.endTransform = endTransform;
+        this.startTransform = startTransform;
+        this.transform.position = startTransform.position;
+        this.targetObj = targetObj;
         this.endPos = endPos;
 
         transform.LookAt(endPos);
@@ -45,11 +49,24 @@ public class LightningBeam : MonoBehaviour
 
         lr.material.DOColor(new Color(1, 1, 1, 0), 1).SetEase(Ease.InCubic).OnComplete(TweenOnComplete);
 
+        if(hitSomething)
+        {
+            
+            Quaternion rot = faceNormal != Vector3.zero ? Quaternion.Euler(faceNormal) : transform.rotation;
+            hitmarker = Instantiate(hitmarkerPrefab, endPos, rot);
+
+            if(faceNormal != Vector3.zero)
+            {
+                hitmarker.transform.LookAt(faceNormal + endPos);
+            }
+
+        }
+
     }
 
     private void Update()
     {
-        if (staffCrystal == null) return;
+        if (startTransform == null) return;
 
         updateTimer += Time.deltaTime;
         if(updateTimer > timePerUpdate)
@@ -58,22 +75,27 @@ public class LightningBeam : MonoBehaviour
             UpdatePoints();
         }
 
-        transform.position = staffCrystal.position;
-        lr.SetPosition(0, staffCrystal.position);
+        transform.position = startTransform.position;
+        lr.SetPosition(0, startTransform.position);
 
-        if(endTransform != null)
+        if(targetObj != null)
         {
-            endPos = endTransform.position;
+            endPos = targetObj.transform.position;
             
         }
-        lr.SetPosition(lr.positionCount - 1, endTransform.position);
+        lr.SetPosition(lr.positionCount - 1, endPos);
         transform.LookAt(endPos);
+
+        if(hitmarker != null)
+        {
+            hitmarker.transform.position = endPos;
+        }
     }
 
     private void UpdatePoints()
     {
 
-        Vector3[] points = CalculatePoints(staffCrystal.position, endPos);
+        Vector3[] points = CalculatePoints(startTransform.position, endPos);
 
         lr.positionCount = points.Length;
         lr.SetPositions(points);
