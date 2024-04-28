@@ -42,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
     private bool _inJump; //If the player is currently doing a jump
 
     public int jumpsLeft; //current jumps left
+    public GameObject cloudPrefab;
 
     [Header("GroundPound")]
     //public float highJumpForce; //jump velocity
@@ -352,13 +353,19 @@ public class PlayerMovement : MonoBehaviour
             }
 
             _wishedJumpPerformed = true;
+            _isGroundPounding = false;
+
+            if (jumpsLeft == 1)
+            {
+                Instantiate(cloudPrefab, transform.position, Quaternion.identity);
+            }
 
             AdjustValuesWhenJumpPerformed();
 
-            if (_isGroundPounding)
-            {
-                _isGroundPounding = false;
-            }
+
+            
+            
+
         }
         else if(_wishedJumpPerformed && _continuedJumpTimer < continuedJumpDuration && vel.y <= initialJumpForce*1.5f) //Only if player has less velocity than the highest you can reach from a normal jump
         {
