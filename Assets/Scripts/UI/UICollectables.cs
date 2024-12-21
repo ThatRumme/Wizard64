@@ -51,6 +51,8 @@ public class UICollectables : MonoBehaviour
 
         runeCount = totalRunes;
         crystalCount = totalCrystals;
+
+        EventManager.OnCollectablesUpdated();
     }
 
     void OnCrystalObtained(int id)
@@ -67,7 +69,7 @@ public class UICollectables : MonoBehaviour
 
     void UpdateValues()
     {
-        runesText.SetText(runeCount.ToString() + "/" + maxRunes.ToString());
-        crystalText.SetText(crystalCount.ToString() + "/" + maxCrystals.ToString());
+        runesText.SetText(runeCount.ToString());// + "/" + maxRunes.ToString())
+        crystalText.SetText(crystalCount.ToString());// + "/" + maxCrystals.ToString());
     }
 }

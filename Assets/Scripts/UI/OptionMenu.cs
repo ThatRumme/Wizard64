@@ -513,7 +513,7 @@ public class OptionMenu : MonoBehaviour
 
     public void CloseOptions()
     {
-        Debug.Log(GameManager.Instance.inMainMenu);
+        //Debug.Log(GameManager.Instance.inMainMenu);
 
         //if (gameObject.activeInHierarchy)
         //{
