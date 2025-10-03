@@ -84,7 +84,7 @@ public class MouseLook : MonoBehaviour
 
     private void LateUpdate()
     {
-        transform.position = player.transform.position;
+        transform.position = player.transform.position + Vector3.up*1.5f;
 
         if (!gm.gameActive || _isRecentering)
             return;

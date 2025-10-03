@@ -1,8 +1,9 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Windows;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -41,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
     private bool _inJump; //If the player is currently doing a jump
 
     public int jumpsLeft; //current jumps left
+    public GameObject cloudPrefab;
 
     [Header("GroundPound")]
     //public float highJumpForce; //jump velocity
@@ -58,7 +60,16 @@ public class PlayerMovement : MonoBehaviour
     private bool _isSuperJumping;
     private bool _isChargingGroundPound = false;
     private bool _gpIsUpgraded = false;
-   
+
+    [Header("Abilities")]
+    private bool _isHovering = false;
+
+    [Header("Ice")]
+    public float maxWalkSpeedIce;
+    public float iceAcceleration;
+    private bool _isInIce = false;
+    private List<Collider> _iceColliders = new List<Collider>();
+
 
     [Header("Misc")]
     public Transform cameraPivot; // Camera pivot
@@ -76,6 +87,20 @@ public class PlayerMovement : MonoBehaviour
 
     //Animator vars
     private int _runningParamIndex = Animator.StringToHash("Running");
+    #endregion
+
+    #region Propeties
+
+    public bool IsGrounded()
+    {
+        return isGrounded;
+    }
+
+    public bool IsUsingGroundPound()
+    {
+        return _isGroundPounding || _isChargingGroundPound;
+    }
+
     #endregion
 
     #region Unity Methods (Start, Awake, Update)
@@ -132,6 +157,7 @@ public class PlayerMovement : MonoBehaviour
         {
             _removedJump = false;
             _inJump = false;
+            _isInIce = _iceColliders.Count > 0;
             Land();   
         }
         else
@@ -146,9 +172,7 @@ public class PlayerMovement : MonoBehaviour
 
         oldPos = transform.position;
 
-        //Move the player
-        _controller.Move(Time.deltaTime * _speedMultiplier * vel);
-        
+        MoveThePlayer();
 
         
 
@@ -157,6 +181,18 @@ public class PlayerMovement : MonoBehaviour
     }
 
     #endregion
+
+    void MoveThePlayer()
+    {
+
+        if (_isHovering && vel.y < 0)
+        {
+            vel.y = 0;
+        }
+
+
+        _controller.Move(Time.deltaTime * _speedMultiplier * vel);
+    }
 
     void AirTimer()
     {
@@ -237,11 +273,12 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 fixedMovement = transform.TransformVector(moveVec).normalized;
 
-        float maxSpeed = maxWalkSpeed;
+        float maxSpeed = _isInIce ? maxWalkSpeedIce : maxWalkSpeed;
+        float accel = _isInIce ? iceAcceleration : groundAcceleration;
 
         // Move vel vector towards target vel
         Vector3 velXZ = new Vector3(vel.x, 0, vel.z);
-        Vector3 newVelXZ = Vector3.MoveTowards(velXZ, maxSpeed * fixedMovement, groundAcceleration * Time.deltaTime);
+        Vector3 newVelXZ = Vector3.MoveTowards(velXZ, maxSpeed * fixedMovement, accel * Time.deltaTime);
         vel = new Vector3(newVelXZ.x, vel.y, newVelXZ.z);
 
         movedDistance += newVelXZ.magnitude * Time.deltaTime;
@@ -322,13 +359,19 @@ public class PlayerMovement : MonoBehaviour
             }
 
             _wishedJumpPerformed = true;
+            _isGroundPounding = false;
+
+            if (jumpsLeft == 1)
+            {
+                Instantiate(cloudPrefab, transform.position, Quaternion.identity);
+            }
 
             AdjustValuesWhenJumpPerformed();
 
-            if (_isGroundPounding)
-            {
-                _isGroundPounding = false;
-            }
+
+            
+            
+
         }
         else if(_wishedJumpPerformed && _continuedJumpTimer < continuedJumpDuration && vel.y <= initialJumpForce*1.5f) //Only if player has less velocity than the highest you can reach from a normal jump
         {
@@ -467,5 +510,42 @@ public class PlayerMovement : MonoBehaviour
         }
        
     }
+
+
+    #region Abilities
+
+    public void OnFlameThrowerActivate()
+    {
+        _isHovering = true;
+    }
+
+    public void OnFlameThrowerDeactivate()
+    {
+        _isHovering = false;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("Ice"))
+        {
+            if (!_iceColliders.Contains(other))
+            {
+                _iceColliders.Add(other);
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Ice"))
+        {
+            if (_iceColliders.Contains(other))
+            {
+                _iceColliders.Remove(other);
+            }
+        }
+    }
+
+    #endregion
 
 }
