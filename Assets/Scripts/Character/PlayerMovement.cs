@@ -125,7 +125,7 @@ public class PlayerMovement : MonoBehaviour
         //setup
         _controller = GetComponent<CharacterController>();
         player = GetComponent<Player>();
-        inputs = GameManager.Instance.inputs;
+        inputs = InputManager.Instance.inputs;
 
         inputs.Main.Jump.performed += JumpInput;
         inputs.Main.Jump.canceled += JumpInput;
@@ -143,7 +143,7 @@ public class PlayerMovement : MonoBehaviour
         }
             
         //Real shitty animation control
-        player._animationContoller.SetBool(_runningParamIndex, _movement.magnitude > 0.1);
+        //player._animationContoller.SetBool(_runningParamIndex, _movement.magnitude > 0.1);
         
         //update grounded
         isGrounded = _controller.isGrounded;

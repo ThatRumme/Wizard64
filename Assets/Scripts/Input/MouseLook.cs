@@ -39,7 +39,7 @@ public class MouseLook : MonoBehaviour
     private void Start()
     {
         gm = GameManager.Instance;
-        inputs = GameManager.Instance.inputs;
+        inputs = InputManager.Instance.inputs;
         var rb = GetComponent<Rigidbody>();
         if (rb)
         {

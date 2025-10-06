@@ -21,7 +21,7 @@ public class AbilityHandler : MonoBehaviour
         player = GetComponentInParent<Player>();
         playerMovement = GetComponentInParent<PlayerMovement>();
 
-        inputs = GameManager.Instance.inputs;
+        inputs = InputManager.Instance.inputs;
         inputs.Main.SwitchAbilityForward.performed += NextAbilityInput;
         inputs.Main.SwitchAbilityBackward.performed += PrevAbilityInput;
         inputs.Main.UseAbility.performed += UseAbility;

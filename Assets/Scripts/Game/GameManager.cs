@@ -19,19 +19,20 @@ public class GameManager : Singleton<GameManager> {
 
     private void Awake()
     {
-        inputs = InputManager.Instance.inputs;
+        
         SaveGame.Instance.LoadData();
     }
 
     private void OnEnable()
     {
-        inputs.Enable();
+        // inputs.Enable();
+        inputs = InputManager.Instance.inputs;
         inputs.Main.Exit.performed += EscapePress;
     }
 
     private void OnDisable()
     {
-        inputs.Disable();
+        //inputs.Disable();
         inputs.Main.Exit.performed -= EscapePress;
 }
 

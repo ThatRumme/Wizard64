@@ -46,7 +46,7 @@ public class Player : MonoBehaviour
     {
         pm = GetComponent<PlayerMovement>();
 
-        inputs = GameManager.Instance.inputs;
+        inputs = InputManager.Instance.inputs;
         inputs.Main.Fire1.performed += AttemptMeleeAttack;
         inputs.Main.Interact.performed += OnInteractKey;
 

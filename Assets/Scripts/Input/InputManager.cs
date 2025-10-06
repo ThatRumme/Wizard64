@@ -11,6 +11,11 @@ public class InputManager : Singleton<InputManager>
     private void Awake()
     {
         inputs = new PlayerInput();
+    }
+
+    private void OnEnable()
+    {
+        
         inputs.Enable();
     }
 
